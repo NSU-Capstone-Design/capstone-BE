@@ -1,4 +1,4 @@
-from .ioexam import *
+'''from .ioexam import *
 from .comment import *
 from .group import *
 from .groupmanage import *
@@ -6,4 +6,4 @@ from .myquestion import *
 from .problem import *
 from .probmanage import *
 from .questionpost import *
-from .user import *
+from .user import *'''
