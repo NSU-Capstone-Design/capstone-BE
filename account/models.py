@@ -28,6 +28,7 @@ class UserManager(BaseUserManager):
             password=password,
             nickname=nickname,
         )
+        user.is_superuser = True  # 나중에 지우자
         user.is_admin = True
         user.save(using=self._db)
         return user
