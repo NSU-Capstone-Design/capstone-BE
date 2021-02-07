@@ -2,10 +2,27 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from .models import User
+from .serializers import UserLoginSerializer, UserCreateSerializer
 
-# from .serializers import UserCreateSerializer
-# from .models import User
-from .serializers import UserLoginSerializer
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_user(request):
+    if request.method == 'POST':
+        serializer = UserCreateSerializer(data=request.data)
+        if not serializer.is_valid(raise_exception=True):
+            return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
+
+        check_id = User.objects.filter(user_id=serializer.validated_data['user_id']).first()
+        check_email = User.objects.filter(email=serializer.validated_data['email']).first()
+        if check_id is None and check_email is None:
+            serializer.save()
+            return Response({"message": "ok"}, status=status.HTTP_201_CREATED)
+        if check_id is not None:
+            return Response({"message": "duplicate ID"}, status=status.HTTP_409_CONFLICT)
+        if check_email is not None:
+            return Response({"message": "duplicate Email"}, status=status.HTTP_409_CONFLICT)
 
 
 @api_view(['POST'])
