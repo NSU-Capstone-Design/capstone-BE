@@ -10,13 +10,15 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 User = get_user_model()
 
-
-class UserCreateSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
-    user_id = serializers.CharField(required=True)
-    password = serializers.CharField(required=True)
-    # student_id = serializers.CharField(max_length=10)
-
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'user_id',
+            'email',
+            'nickname',
+            'password',
+        ]
 
     def create(self, validated_data):
         user = User.objects.create(
@@ -29,10 +31,14 @@ class UserCreateSerializer(serializers.Serializer):
         return user
 
 
-class UserLoginSerializer(serializers.Serializer):
-    user_id = serializers.CharField(max_length=64)
-    password = serializers.CharField(max_length=128, write_only=True)
-    token = serializers.CharField(max_length=255, read_only=True)
+class UserLoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'user_id',
+            'password',
+            'token'
+        ]
 
     def validate(self, data):
         user_id = data.get("user_id", None)
