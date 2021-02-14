@@ -53,5 +53,23 @@ for i in soup.select("#problem_limit > ul"):
 problem["problem_sampleinput1_data"] = soup.select("#sample-input-1")[0].text
 problem["problem_sampleoutput1_data"] = soup.select("#sample-output-1")[0].text
 
+try:
+    problem["problem_sampleinput2_data"] = soup.select("#sample-input-2")[0].text
+except IndexError:
+    pass
+
+try:
+    problem["problem_sampleoutput2_data"] = soup.select("#sample-output-2")[0].text
+except IndexError:
+    pass
+
+try:
+    base_url = "https://www.acmicpc.net"
+    img = soup.find("div", {"class": "problem-text"})
+    img_src = img.find("img")["src"]
+    img_url = base_url + img_src
+    urllib.request.urlretrieve(img_url, "testimg.jpg")
+except TypeError:
+    pass
 
 print(problem)
