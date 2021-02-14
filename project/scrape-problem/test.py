@@ -20,57 +20,57 @@ soup = BeautifulSoup(html, "html5lib")
 
 problem = {}
 
-
 problem["title"] = soup.find("span", id="problem_title").text
-problemInfo = soup.select("table#problem-info > tbody > tr > td")
-problem["timeout"] = problemInfo[0].text
-problem["memory_limit"] = problemInfo[1].text
-problem["submission"] = problemInfo[2].text
-problem["correct"] = problemInfo[3].text
-problem["correct_people"] = problemInfo[4].text
-problem["correct_answer_rate"] = problemInfo[5].text
+for i in soup.select("table#problem-info > tbody > tr"):
+    problemInfo = i.select("td")
+    problem["timeout"] = problemInfo[0].text
+    problem["memory_limit"] = problemInfo[1].text
+    problem["submission"] = problemInfo[2].text
+    problem["correct"] = problemInfo[3].text
+    problem["correct_people"] = problemInfo[4].text
+    problem["correct_answer_rate"] = problemInfo[5].text
 
-problem["problem_content"] = soup.select("#description > .headline > h2")[0].text
-problemContent = soup.select("#problem_description > p")
-problem["problem_content1"] = problemContent[0].text
-problem["problem_content2"] = problemContent[1].text
-problem["problem_content4"] = problemContent[3].img['src']
-problem["problem_content5"] = problemContent[4].text
-problem["problem_content6"] = problemContent[5].text
-problem["problem_content7"] = problemContent[6].text
-problem["problem_content8"] = problemContent[7].text
+for i in soup.select("#problem_description"):
+    problemContent = i.select("p")
+    for j in range(len(problemContent)):
+        problem["problem_content" + str(j+1)] = problemContent[j].text
 
-problem["problem_input"] = soup.select("#input > .headline > h2")[0].text
-problemInput = soup.select("#problem_input > p")
-problem["problem_input1"] = problemInput[0].text
-problem["problem_input2"] = problemInput[1].text
-problem["problem_input3"] = problemInput[2].text
+for i in soup.select("#problem_input"):
+    problemInput = i.select("p")
+    for j in range(len(problemInput)):
+        problem["problem_input" + str(j+1)] = problemInput[j].text
 
-problem["problem_output"] = soup.select("#output > .headline > h2")[0].text
-problemOutput = soup.select("#problem_output > p")
-problem["problem_output1"] = problemOutput[0].text
-problem["problem_output2"] = problemOutput[1].text
+for i in soup.select("#problem_output"):
+    problemOutput = i.select("p")
+    for j in range(len(problemOutput)):
+        problem["problem_output" + str(j+1)] = problemOutput[j].text
 
-problem["problem_limit"] = soup.select("#limit > .headline > h2")[0].text
-problemLimit = soup.select("#problem_limit > ul > li")
-problem["problem_limit1"] = problemLimit[0].text
-problem["problem_limit2"] = problemLimit[1].text
-problem["problem_limit3"] = problemLimit[2].text
-problem["problem_limit4"] = problemLimit[3].text
+for i in soup.select("#problem_limit > ul"):
+    problemLimit = i.select("li")
+    for j in range(len(problemLimit)):
+        problem["problem_limit" + str(j+1)] = problemLimit[j].text
 
-problem["problem_sampleinput1"] = soup.select("#sampleinput1 > .headline > h2")[0].text
 problem["problem_sampleinput1_data"] = soup.select("#sample-input-1")[0].text
-
-problem["problem_sampleoutput1"] = soup.select("#sampleoutput1 > .headline > h2")[0].text
 problem["problem_sampleoutput1_data"] = soup.select("#sample-output-1")[0].text
 
-problem["problem_sampleinput2"] = soup.select("#sampleinput2 > .headline > h2")[0].text
-problem["problem_sampleinput2_data"] = soup.select("#sample-input-2")[0].text
+try:
+    problem["problem_sampleinput2_data"] = soup.select("#sample-input-2")[0].text
+except IndexError:
+    pass
 
+try:
+    problem["problem_sampleoutput2_data"] = soup.select("#sample-output-2")[0].text
+except IndexError:
+    pass
 
-problem["problem_sampleoutput2"] = soup.select("#sampleoutput2 > .headline > h2")[0].text
-problem["problem_sampleoutput2_data"] = soup.select("#sample-output-2")[0].text
+try:
+    base_url = "https://www.acmicpc.net"
+    img = soup.find("div", {"class": "problem-text"})
+    img_src = img.find("img")["src"]
+    img_url = base_url + img_src
+    urllib.request.urlretrieve(img_url, "testimg.jpg")
+except TypeError:
+    pass
 
-# problem_title = soup.select('tr > td:nth-child(2) > a')
 
 print(problem)
