@@ -10,12 +10,13 @@ from rest_framework.permissions import IsAuthenticated
 
 
 # 인증이 필요한 요청 예제
-# class VerifyView(APIView):
-#     permission_classes = (IsAuthenticated,)
-#
-#     def get(self, request):
-#         content = {'message': 'Hello, World!'}
-#         return Response(content)
+class TestView(APIView):
+    # 이부분 설정을 해주면 토큰으로 유저가 맞는지 확인 합니다.(유저 인증이 필요한 기능은 꼭 설정해주세요)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        content = {'message': 'Hello, World!'}
+        return Response(content)
 
 
 @api_view(['POST'])
@@ -35,22 +36,3 @@ def create_user(request):
             return Response({"message": "duplicate ID", "code": 2}, status=status.HTTP_409_CONFLICT)
         if check_email is not None:
             return Response({"message": "duplicate Email", "code": 3}, status=status.HTTP_409_CONFLICT)
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def login(request):
-    if request.method == 'POST':
-        serializer = UserLoginSerializer(data=request.data)
-
-        if not serializer.is_valid(raise_exception=True):
-            return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
-        if serializer.validated_data['user_id'] == "None":
-            return Response({'message': 'fail'}, status=status.HTTP_401_UNAUTHORIZED)
-
-        response = {
-            'success': 'True',
-            'user_id': serializer.data['user_id'],
-            'token': serializer.data['token']
-        }
-        return Response(response, status=status.HTTP_200_OK)
