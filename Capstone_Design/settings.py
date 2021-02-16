@@ -27,8 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-# Application definition
-
+# 앱 등록
+# 생성한 앱은 더 정확하게 설정 클래스를 등록해주세요
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'corsheaders',
     'pygments',
-    'account',
+    'account.apps.AccountConfig'
 ]
 
 MIDDLEWARE = [
@@ -155,18 +155,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+# 2021-02-14 김지수: 한국 시간대로 변경
+LANGUAGE_CODE = 'ko-kr'
+TIME_ZONE = 'Asia/Seoul'
+USE_TZ = False # 한국 시간대로 사용하므로 false
 
 USE_I18N = True
 
 USE_L10N = True
-
-USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
