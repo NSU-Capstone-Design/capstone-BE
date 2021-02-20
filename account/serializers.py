@@ -1,10 +1,15 @@
 from django.contrib.auth.models import update_last_login
 from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from account.models import User
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
 
 class UserCreateSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
