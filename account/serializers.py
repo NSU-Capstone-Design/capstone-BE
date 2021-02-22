@@ -1,15 +1,16 @@
 from django.contrib.auth.models import update_last_login
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
 from account.models import User
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class UserSerializer(ModelSerializer):
+
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['user_id', 'email', 'nickname', 'level', 'expert_user']
+
 
 class UserCreateSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
@@ -29,3 +30,5 @@ class UserCreateSerializer(serializers.Serializer):
 
         user.save()
         return user
+
+    # def updata(self, validated_data):
