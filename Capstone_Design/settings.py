@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'pygments',
-    'account.apps.AccountConfig'
+    'account.apps.AccountConfig',
+    'problemInfo'
 ]
 
 MIDDLEWARE = [
