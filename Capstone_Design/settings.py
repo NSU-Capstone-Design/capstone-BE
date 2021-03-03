@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'pygments',
     'account.apps.AccountConfig',
-    'problemInfo'
+    'problemInfo.apps.ProbleminfoConfig'
 ]
 
 MIDDLEWARE = [
