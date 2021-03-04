@@ -6,6 +6,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['user_id', 'email', 'nickname', 'level', 'expert_user']
+
+
 class UserCreateSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     user_id = serializers.CharField(required=True)
@@ -24,3 +30,5 @@ class UserCreateSerializer(serializers.Serializer):
 
         user.save()
         return user
+
+    # def updata(self, validated_data):

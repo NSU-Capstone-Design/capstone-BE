@@ -2,11 +2,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .models import User
-from .serializers import UserCreateSerializer
-
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+import jwt
+from django.conf import settings
+from .models import User
+from .serializers import UserSerializer, UserCreateSerializer
 
 
 # 인증이 필요한 요청 예제
@@ -17,6 +18,26 @@ class TestView(APIView):
     def get(self, request):
         content = {'message': 'Hello, World!'}
         return Response(content)
+
+
+class UserInfoView(APIView):
+    permission_classes(IsAuthenticated, )
+
+    def get(self, request):
+        token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
+        if token == None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
+                userInfo = User.objects.filter(id=user_pk)
+                jsonUserInfo = UserSerializer(userInfo, many=True).data
+                return Response(jsonUserInfo)
+            except:
+                content = {
+                    'message': "잘못된 토큰값이 들어왔습니다."
+                }
+                return Response(content)
 
 
 @api_view(['POST'])
