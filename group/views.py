@@ -17,7 +17,7 @@ class GroupListAPIView(APIView):
         serializer = GroupSerializer(Group.objects.all(), many=True)
 
 class GroupManageListAPIView(APIView):
-    def post(self,request):
+    def post(self, request):
         serializer = GroupManageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
