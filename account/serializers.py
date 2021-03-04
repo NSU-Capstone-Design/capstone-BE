@@ -12,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['user_id', 'email', 'nickname', 'level', 'expert_user']
 
 
+
 class UserCreateSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     user_id = serializers.CharField(required=True)

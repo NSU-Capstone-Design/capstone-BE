@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'rest_auth',
     'corsheaders',
     'pygments',
-    'account.apps.AccountConfig'
+    'account.apps.AccountConfig',
+    'group.apps.GroupConfig'
 ]
 
 MIDDLEWARE = [

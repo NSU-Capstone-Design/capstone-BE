@@ -10,6 +10,7 @@ class UserManager(BaseUserManager):
         """
         if not user_id:
             raise ValueError('The given email must be set')
+
         user = self.model(
             user_id=user_id,
             email=email,

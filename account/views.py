@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 import jwt
 from django.conf import settings
 from .models import User
+
 from .serializers import UserSerializer, UserCreateSerializer
 
 
@@ -56,4 +57,5 @@ def create_user(request):
         if check_id is not None:
             return Response({"message": "duplicate ID", "code": 2}, status=status.HTTP_409_CONFLICT)
         if check_email is not None:
+
             return Response({"message": "duplicate Email", "code": 3}, status=status.HTTP_409_CONFLICT)
