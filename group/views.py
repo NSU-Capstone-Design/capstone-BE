@@ -45,7 +45,7 @@ class GroupDetailAPIView(APIView):
             serializer = GroupSerializer(group)
             group.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        elif request.data['description'] is not '':
+        elif request.data['description'] != '':
             group.description = request.data['description']
             serializer = GroupSerializer(group)
             group.save()
