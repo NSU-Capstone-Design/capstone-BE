@@ -21,12 +21,32 @@ class TestView(APIView):
         return Response(content)
 
 
+class UserLevelView(APIView):
+    permission_classes(IsAuthenticated, )
+
+    def get(self, request):
+        token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
+
+        if token is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
+                user_level = User.objects.get(id=int(user_pk))
+                return Response({'level': user_level})
+            except Exception as e:
+                content = {
+                    'message': "잘못된 토큰값이 들어왔습니다."
+                }
+                return Response(content)
+
+
 class UserInfoView(APIView):
     permission_classes(IsAuthenticated, )
 
     def get(self, request):
         token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
-        if token == None:
+        if token is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
             try:
@@ -57,5 +77,4 @@ def create_user(request):
         if check_id is not None:
             return Response({"message": "duplicate ID", "code": 2}, status=status.HTTP_409_CONFLICT)
         if check_email is not None:
-
             return Response({"message": "duplicate Email", "code": 3}, status=status.HTTP_409_CONFLICT)
