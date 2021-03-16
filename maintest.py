@@ -105,4 +105,4 @@ IOExam(title=problem_data["title"],
        problem_sampleinput4_data = problem_data["problem_sampleinput4_data"],
        problem_sampleoutput4_data = problem_data["problem_sampleoutput4_data"],
        problem_sampleinput5_data = problem_data["problem_sampleinput5_data"],
-       problem_sampleoutput5_data = problem_data["problem_sampleoutput5_data"]).save()
+       problem_sampleoutput5_data = problem_data["problem_sampleoutput5_data"]).save()\
