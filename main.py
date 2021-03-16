@@ -1,6 +1,5 @@
 from urllib.request import urlopen, Request
 import time
-import urllib.request
 from bs4 import BeautifulSoup
 from urllib.error import HTTPError, URLError
 import django
@@ -10,7 +9,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Capstone_Design.settings")
 
 django.setup()
 
-from problemInfo.models import problemInfo
+from problemInfo.models import problemInfo, IOExam
 
 def crawl_prob(url, level):
     try:
@@ -25,70 +24,91 @@ def crawl_prob(url, level):
 
     soup = BeautifulSoup(html, "html5lib")
 
-    problem = {"problem_sampleinput2_data": '', "problem_sampleoutput2_data": ''}
+    problem = {}
 
     problem_data = problem_info(soup, problem)
-    problemInfo(title=problem_data['title'],
-                timeout=problem_data['timeout'],
-                memory_limit=problem_data['memory_limit'],
-                submission=problem_data['submission'],
-                correct=problem_data['correct'],
-                correct_people=problem_data['correct_people'],
-                correct_answer_rate=problem_data['correct_answer_rate'],
-                problem_content=problem_data['problem_content'],
-                problem_input=problem_data['problem_input'],
-                problem_output=problem_data['problem_output'],
-                problem_sampleinput1_data=problem_data['problem_sampleinput1_data'],
-                problem_sampleoutput1_data=problem_data['problem_sampleoutput1_data'],
-                problem_sampleinput2_data=problem_data['problem_sampleinput2_data'],
-                problem_sampleoutput2_data=problem_data['problem_sampleoutput2_data']).save()
+    problemInfo(title = problem_data["title"],
+                timeout = problem_data["timeout"],
+                memory_limit = problem_data["memory_limit"],
+                submission = problem_data["submission"],
+                correct = problem_data["correct"],
+                correct_people = problem_data["correct_people"],
+                correct_answer_rate = problem_data["correct_answer_rate"],
+                problem_content = problem_data["problem_content"],
+                problem_input = problem_data["problem_input"],
+                problem_output = problem_data["problem_output"],
+                imgurl = problem_data["imgurl"]).save()
+
+    IOExam(title=problem_data["title"],
+           problem_sampleinput1_data = problem_data["problem_sampleinput1_data"],
+           problem_sampleoutput1_data = problem_data["problem_sampleoutput1_data"],
+           problem_sampleinput2_data = problem_data["problem_sampleinput2_data"],
+           problem_sampleoutput2_data = problem_data["problem_sampleoutput2_data"],
+           problem_sampleinput3_data = problem_data["problem_sampleinput3_data"],
+           problem_sampleoutput3_data = problem_data["problem_sampleoutput3_data"],
+           problem_sampleinput4_data = problem_data["problem_sampleinput4_data"],
+           problem_sampleoutput4_data = problem_data["problem_sampleoutput4_data"],
+           problem_sampleinput5_data = problem_data["problem_sampleinput5_data"],
+           problem_sampleoutput5_data = problem_data["problem_sampleoutput5_data"],
+           problem_sampleinput6_data=problem_data["problem_sampleinput6_data"],
+           problem_sampleoutput6_data=problem_data["problem_sampleoutput6_data"],
+           problem_sampleinput7_data=problem_data["problem_sampleinput7_data"],
+           problem_sampleoutput7_data=problem_data["problem_sampleoutput7_data"],
+           problem_sampleinput8_data=problem_data["problem_sampleinput8_data"],
+           problem_sampleoutput8_data=problem_data["problem_sampleoutput8_data"],
+           problem_sampleinput9_data=problem_data["problem_sampleinput9_data"],
+           problem_sampleoutput9_data=problem_data["problem_sampleoutput9_data"],
+           problem_sampleinput10_data=problem_data["problem_sampleinput10_data"],
+           problem_sampleoutput10_data=problem_data["problem_sampleoutput10_data"]).save()
 
 
 def problem_info(soup, problem):
     problem["title"] = soup.find("span", id="problem_title").text
     for i in soup.select("table#problem-info > tbody > tr"):
-        problemInfo = i.select("td")
-        problem["timeout"] = problemInfo[0].text
-        problem["memory_limit"] = problemInfo[1].text
-        problem["submission"] = problemInfo[2].text
-        problem["correct"] = problemInfo[3].text
-        problem["correct_people"] = problemInfo[4].text
-        problem["correct_answer_rate"] = problemInfo[5].text
+        problem_info_list = i.select("td")
+        problem["timeout"] = problem_info_list[0].text
+        problem["memory_limit"] = problem_info_list[1].text
+        problem["submission"] = problem_info_list[2].text
+        problem["correct"] = problem_info_list[3].text
+        problem["correct_people"] = problem_info_list[4].text
+        problem["correct_answer_rate"] = problem_info_list[5].text
 
-    problemContent = soup.select("#problem_description")[0].find_all(["p", "pre", "ol"])
-    problem["problem_content"] =problemContent
+    problem_content_info = []
+    problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol"])
+    for i in problem_content:
+        problem_content_info.append(i.text)
+    problem["problem_content"] = problem_content_info
 
-    problemInput = soup.select("#problem_input > p")
-    problem["problem_input"] = problemInput
+    problem_input_info = []
+    problem_input = soup.select("#problem_input > p")
+    for i in problem_input:
+        problem_input_info.append(i.text)
+    problem["problem_input"] = problem_input_info
 
-    problemOutput = soup.select("#problem_output > p")
-    problem["problem_output"] = problemOutput
+    problem_output_info = []
+    problem_output = soup.select("#problem_input > p")
+    for i in problem_output:
+        problem_output_info.append(i.text)
+    problem["problem_output"] = problem_output_info
 
-    for i in soup.select("#problem_limit > ul"):
-        problemLimit = i.select("li")
-        for j in range(len(problemLimit)):
-            problem["problem_limit" + str(j + 1)] = problemLimit[j].text
-
-    problem["problem_sampleinput1_data"] = soup.select("#sample-input-1")[0].text
-    problem["problem_sampleoutput1_data"] = soup.select("#sample-output-1")[0].text
-
-    try:
-        problem["problem_sampleinput2_data"] = soup.select("#sample-input-2")[0].text
-    except IndexError:
-        pass
-    try:
-        problem["problem_sampleoutput2_data"] = soup.select("#sample-output-2")[0].text
-    except IndexError:
-        pass
+    for i in range(1, 11):
+        try:
+            problem["problem_sampleinput" + str(i) + "_data"] = soup.select("#sample-input-" + str(i))[0].text
+        except IndexError:
+            problem["problem_sampleinput" + str(i) + "_data"] = ""
+        try:
+            problem["problem_sampleoutput" + str(i) + "_data"] = soup.select("#sample-output-" + str(i))[0].text
+        except IndexError:
+            problem["problem_sampleoutput" + str(i) + "_data"] = ""
 
     try:
         base_url = "https://www.acmicpc.net"
         img = soup.find("div", {"class": "problem-text"})
         img_src = img.find("img")["src"]
         img_url = base_url + img_src
-        urllib.request.urlretrieve(img_url, "testimg.jpg")
+        problem["imgurl"] = img_url
     except TypeError:
-        pass
+        problem["imgurl"] = ""
 
     return problem
 
@@ -154,6 +174,6 @@ for i in page_data:
         problems_link = soup_temp.select("a.ivEtZs")
         for link in problems_link:
             print(str(i) + "__")
-            print(link.get('href'))
+            print(link.get("href"))
             time.sleep(3)
-            crawl_prob(link.get('href'), i)
+            crawl_prob(link.get("href"), i)
