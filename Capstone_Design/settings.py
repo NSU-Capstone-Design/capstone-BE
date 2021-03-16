@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'pygments',
     'account.apps.AccountConfig',
+    'group.apps.GroupConfig',
+    'levelTest.apps.LeveltestConfig'
     'group.apps.GroupConfig'
     'problemInfo.apps.ProbleminfoConfig'
 ]
