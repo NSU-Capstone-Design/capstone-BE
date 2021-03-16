@@ -3,4 +3,3 @@ from problemInfo.models import problemInfo, IOExam
 
 admin.site.register(problemInfo)
 admin.site.register(IOExam)
-
