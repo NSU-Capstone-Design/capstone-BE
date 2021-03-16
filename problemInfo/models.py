@@ -1,7 +1,9 @@
 from django.db import models
 
-class problemInfo(models.Model):
-    title = models.CharField(max_length=50)
+
+class ProblemInfo(models.Model):
+    title = models.CharField(verbose_name="제목", max_length=50)
+    level = models.IntegerField(default=-1)
     timeout = models.CharField(max_length=50)
     memory_limit = models.CharField(max_length=50)
     submission = models.CharField(max_length=50)
@@ -16,28 +18,12 @@ class problemInfo(models.Model):
     def __str__(self):
         return self.title
 
+
 class IOExam(models.Model):
-    title = models.CharField(max_length=50)
-    problem_sampleinput1_data = models.TextField(null=True)
-    problem_sampleoutput1_data = models.TextField(null=True)
-    problem_sampleinput2_data = models.TextField(null=True)
-    problem_sampleoutput2_data = models.TextField(null=True)
-    problem_sampleinput3_data = models.TextField(null=True)
-    problem_sampleoutput3_data = models.TextField(null=True)
-    problem_sampleinput4_data = models.TextField(null=True)
-    problem_sampleoutput4_data = models.TextField(null=True)
-    problem_sampleinput5_data = models.TextField(null=True)
-    problem_sampleoutput5_data = models.TextField(null=True)
-    problem_sampleinput6_data = models.TextField(null=True)
-    problem_sampleoutput6_data = models.TextField(null=True)
-    problem_sampleinput7_data = models.TextField(null=True)
-    problem_sampleoutput7_data = models.TextField(null=True)
-    problem_sampleinput8_data = models.TextField(null=True)
-    problem_sampleoutput8_data = models.TextField(null=True)
-    problem_sampleinput9_data = models.TextField(null=True)
-    problem_sampleoutput9_data = models.TextField(null=True)
-    problem_sampleinput10_data = models.TextField(null=True)
-    problem_sampleoutput10_data = models.TextField(null=True)
+    problem = models.ForeignKey(ProblemInfo, on_delete=models.CASCADE)
+    value = models.CharField(max_length=255)
+    io_num = models.IntegerField()
+    is_input = models.BooleanField()
 
     def __str__(self):
-        return self.title
+        return self.problem.title
