@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'pygments',
     'account.apps.AccountConfig',
     'group.apps.GroupConfig'
+    'problemInfo.apps.ProbleminfoConfig'
 ]
 
 MIDDLEWARE = [
