@@ -67,22 +67,22 @@ def problem_info(soup, problem):
         problem["correct_people"] = problem_info_list[4].text
         problem["correct_answer_rate"] = problem_info_list[5].text
 
-    problem_content_info = ''
+    problem_content_info = ""
     problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol"])
     for i in problem_content:
-        problem_content_info = problem_content_info + str(i)
+        problem_content_info = problem_content_info + str(i.text)
     problem["problem_content"] = problem_content_info
 
-    problem_input_info = []
+    problem_input_info = ""
     problem_input = soup.select("#problem_input > p")
     for i in problem_input:
-        problem_input_info.append(i.text)
+        problem_input_info = problem_input_info + str(i.text)
     problem["problem_input"] = problem_input_info
 
-    problem_output_info = []
+    problem_output_info = ""
     problem_output = soup.select("#problem_input > p")
     for i in problem_output:
-        problem_output_info.append(i.text)
+        problem_output_info = problem_output_info + str(i.text)
     problem["problem_output"] = problem_output_info
 
     problem["input_exam_list"] = []
