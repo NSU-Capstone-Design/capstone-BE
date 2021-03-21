@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'pygments',
     'account.apps.AccountConfig',
-    'group.apps.GroupConfig'
+    'group.apps.GroupConfig',
     'problemInfo.apps.ProbleminfoConfig'
 ]
 
