@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 import jwt
 from django.conf import settings
 from .models import User
-
+import json
 from .serializers import UserSerializer, UserCreateSerializer
 
 
@@ -22,7 +22,7 @@ class TestView(APIView):
 
 
 class UserLevelView(APIView):
-    permission_classes(IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
@@ -32,7 +32,7 @@ class UserLevelView(APIView):
         else:
             try:
                 user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
-                user_level = User.objects.get(id=int(user_pk))
+                user_level = User.objects.get(id=int(user_pk)).level
                 return Response({'level': user_level})
             except Exception as e:
                 content = {
@@ -75,6 +75,8 @@ def create_user(request):
             serializer.save()
             return Response({"message": "ok", "code": 1}, status=status.HTTP_201_CREATED)
         if check_id is not None:
+            print("id중복?")
             return Response({"message": "duplicate ID", "code": 2}, status=status.HTTP_409_CONFLICT)
         if check_email is not None:
+            print("email중복?")
             return Response({"message": "duplicate Email", "code": 3}, status=status.HTTP_409_CONFLICT)

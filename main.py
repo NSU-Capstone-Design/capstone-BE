@@ -24,11 +24,12 @@ def crawl_prob(url, level):
         print("server could not be found")
 
     soup = BeautifulSoup(html, "html5lib")
-
+    prob_num = int(url.split("/")[-1])
     problem = {}
 
     problem_data = problem_info(soup, problem)
-    problem_pk = ProblemInfo(title=problem_data["title"],
+    problem_pk = ProblemInfo(prob_num=prob_num,
+                             title=problem_data["title"],
                              level=level,
                              timeout=problem_data["timeout"],
                              memory_limit=problem_data["memory_limit"],
