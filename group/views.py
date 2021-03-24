@@ -7,39 +7,46 @@ from rest_framework.permissions import IsAuthenticated
 import jwt
 from django.conf import settings
 from account.models import User
+from account.serializers import UserSerializer
 from rest_framework.decorators import permission_classes
+from django.http import Http404
 
 class GroupListAPIView(APIView):
     permission_classes(IsAuthenticated, )
 
-    def post(self, request):
+    def get_object(self, request):
         token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
-        if token == None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        else:
+        if token:
             try:
                 user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
-                user = User.objects.get(id=user_pk)
-                content = {
-                    request.data['group_name'],
-                    request.data['introduce'],
-                    request.data['group_visible'],
-                    user
-                }
-                serializer = GroupSerializer(content)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            except:
+                return User.objects.filter(id=user_pk)
+            except Exception as e:
                 content = {
                     'message': "잘못된 토큰값이 들어왔습니다."
                 }
                 return Response(content)
+        else:
+            return Http404
 
     def get(self, request):
-        serializer = GroupSerializer(Group.objects.all(), many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
+        if token:
+            try:
+                user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
+                userInfo = User.objects.filter(id=user_pk)
+                GroupInfo = Group.objects.filter(group_master=userInfo)
+                serializer = GroupSerializer(GroupInfo, many=True).data
+                return Response(serializer)
+            except Exception as e:
+                content = {
+                    'message': "왜 안되누"
+                }
+                return Response(content)
+        else:
+            content = {
+                'message': "로그인 후 다시 시도해주세요"
+            }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 class GroupManageListAPIView(APIView):
     def post(self, request):
