@@ -10,6 +10,7 @@ from account.models import User
 from account.serializers import UserSerializer
 from rest_framework.decorators import permission_classes
 from django.http import Http404
+from django.db.models import Q
 
 class GroupListAPIView(APIView):
     permission_classes(IsAuthenticated, )
@@ -21,32 +22,31 @@ class GroupListAPIView(APIView):
                 user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
                 return User.objects.filter(id=user_pk)
             except Exception as e:
-                content = {
-                    'message': "잘못된 토큰값이 들어왔습니다."
-                }
-                return Response(content)
+                return Http404
         else:
             return Http404
 
-    def get(self, request):
+    def post(self, request):
         token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
         if token:
-            try:
-                user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
-                userInfo = User.objects.filter(id=user_pk)
-                GroupInfo = Group.objects.filter(group_master=userInfo)
-                serializer = GroupSerializer(GroupInfo, many=True).data
-                return Response(serializer)
-            except Exception as e:
+            # try:
+            user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
+            userInfo = User.objects.get(id=user_pk)
+            GroupInfo = Group.objects.get(Q(group_master=userInfo) & Q(group_name=request.data["group_name"]))
+            serializer = GroupSerializer(GroupInfo)
+            return Response(serializer.data)
+            # serializer = GroupSerializer(GroupInfo, many=True).data
+            '''except Exception as e:
                 content = {
                     'message': "왜 안되누"
                 }
-                return Response(content)
+                return Response(content)'''
         else:
             content = {
                 'message': "로그인 후 다시 시도해주세요"
             }
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
 
 class GroupManageListAPIView(APIView):
     def post(self, request):
@@ -60,7 +60,9 @@ class GroupManageListAPIView(APIView):
         serializer = GroupManageSerializer(GroupManage.objects.all(), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 from django.shortcuts import get_object_or_404
+
 
 class GroupDetailAPIView(APIView):
     def get_object(self, pk):
@@ -89,9 +91,10 @@ class GroupDetailAPIView(APIView):
 
     def delete(self, request, pk):
         group = self.get_object(pk)
-        #중간에 길드장과 일치하는 사용자인지 체크해야되는 함수가 필요한가?
+        # 중간에 길드장과 일치하는 사용자인지 체크해야되는 함수가 필요한가?
         group.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class GroupManageDetailAPIView(APIView):
     def get_object(self, pk):

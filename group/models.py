@@ -2,9 +2,10 @@ from django.db import models
 from account.models import User
 from django.conf import settings
 
+
 class Group(models.Model):
     group_name = models.CharField(verbose_name='그룹명', max_length=64)
-    description = models.TextField(verbose_name='그룹 소개', null=True)
+    introduce = models.TextField(verbose_name='그룹 소개', null=True)
     group_visible = models.BooleanField(verbose_name='공개여부', default=True)
     group_master = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='그룹장', on_delete=models.CASCADE)
 
