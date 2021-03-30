@@ -7,10 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 import jwt
 from django.conf import settings
 from account.models import User
-from account.serializers import UserSerializer
 from rest_framework.decorators import permission_classes
-from django.http import Http404
-from django.db.models import Q
+from django.db import IntegrityError
 
 class GroupListAPIView(APIView):
     permission_classes(IsAuthenticated, )
@@ -20,30 +18,65 @@ class GroupListAPIView(APIView):
         if token:
             try:
                 user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
-                return User.objects.filter(id=user_pk)
+                return User.objects.get(id=user_pk)
             except Exception as e:
-                return Http404
+                return False
         else:
-            return Http404
+            return False
 
     def post(self, request):
-        token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
-        if token:
-            # try:
-            user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
-            userInfo = User.objects.get(id=user_pk)
-            GroupInfo = Group.objects.get(Q(group_master=userInfo) & Q(group_name=request.data["group_name"]))
-            serializer = GroupSerializer(GroupInfo)
-            return Response(serializer.data)
-            # serializer = GroupSerializer(GroupInfo, many=True).data
-            '''except Exception as e:
-                content = {
-                    'message': "왜 안되누"
+        if self.get_object(request):
+            userInfo = self.get_object(request)
+
+            if userInfo.is_admin:
+                group = {
+                    'group_name': request.data['group_name'],
+                    'introduce': request.data['introduce'],
+                    'group_visible': request.data['group_visible'],
+                    'group_master': userInfo.id
                 }
-                return Response(content)'''
+                serializer = GroupSerializer(data=group)
+
+                try:
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                except IntegrityError as e:
+                    print(e)
+                    if 'UNIQUE constraint' in e.args[0]:
+                        content = {
+                            "Errormsg" :
+                                (userInfo.nickname + "님은 이미 '" +
+                                group['group_name'] + "'(이)라는 그룹명을 가지고 있습니다.")
+                        }
+                        return Response(content,status=status.HTTP_400_BAD_REQUEST)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            content = {
+                'message': "그룹 생성 권한이 없습니다."
+            }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        content = {
+            'message': "로그인 후 사용가능합니다."
+        }
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        if self.get_object(request):
+            userInfo = self.get_object(request)
+            if userInfo.expert_user:
+                groupInfo = Group.objects.filter(group_master=userInfo)
+                serializer = GroupSerializer(groupInfo, many=True)
+                return Response(serializer.data)
+            content = {
+                'message': "이쉬끼 전문가 아님"
+            }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
         else:
             content = {
-                'message': "로그인 후 다시 시도해주세요"
+                'message': "로그인 안함"
             }
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
 

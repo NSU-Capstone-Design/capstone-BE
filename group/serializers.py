@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from group.models import Group, GroupManage
 from account.models import User
+from account.serializers import UserSerializer
+
 
 class GroupSerializer(serializers.ModelSerializer):
-    group_master = serializers.ReadOnlyField(source='group_master.nickname')
-
     class Meta:
         model = Group
         fields = [
@@ -15,7 +15,6 @@ class GroupSerializer(serializers.ModelSerializer):
         ]
 
 class GroupManageSerializer(serializers.ModelSerializer):
-    member = serializers.ReadOnlyField(source='member.nickname')
     class Meta:
         model = GroupManage
         fields = [
