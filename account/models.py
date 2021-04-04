@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 
-
 class UserManager(BaseUserManager):
     def _create_user(self, user_id, password, email, level='0', expert_user=False, nickname=None):
         """
@@ -10,6 +9,7 @@ class UserManager(BaseUserManager):
         """
         if not user_id:
             raise ValueError('The given email must be set')
+
         user = self.model(
             user_id=user_id,
             email=email,
@@ -35,10 +35,10 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    user_id = models.CharField(verbose_name="아이디", max_length=50, unique=True)
+    user_id = models.CharField(verbose_name="아이디", max_length=64, unique=True)
     email = models.EmailField(verbose_name="이메일", max_length=255, unique=True, null=True)
     nickname = models.CharField(verbose_name="닉네임", max_length=50, unique=True)
-    level = models.CharField(verbose_name="레벨", max_length=20, null=True)
+    level = models.CharField(verbose_name="레벨", max_length=20, null=True, default=None)
     expert_user = models.BooleanField(verbose_name="전문가여부", default=False)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
