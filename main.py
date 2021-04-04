@@ -68,9 +68,9 @@ def problem_info(soup, problem):
         problem["correct_answer_rate"] = problem_info_list[5].text
 
     problem_content_info = ""
-    problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol"])
+    problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol", "img"])
     for i in problem_content:
-        problem_content_info = problem_content_info + str(i.text)
+        problem_content_info = problem_content_info + str(i.text) + str(i.get("src")).replace("None", "")
     problem["problem_content"] = problem_content_info
 
     problem_input_info = ""
