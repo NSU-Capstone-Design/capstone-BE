@@ -39,8 +39,7 @@ def crawl_prob(url, level):
                              correct_answer_rate=problem_data["correct_answer_rate"],
                              problem_content=problem_data["problem_content"],
                              problem_input=problem_data["problem_input"],
-                             problem_output=problem_data["problem_output"],
-                             imgurl=problem_data["imgurl"])
+                             problem_output=problem_data["problem_output"])
     problem_pk.save()
     count = 0
     for input, output in zip(problem_data['input_exam_list'], problem_data['output_exam_list']):
@@ -97,14 +96,6 @@ def problem_info(soup, problem):
             problem["output_exam_list"].append(soup.select("#sample-output-" + str(i))[0].text)
         except IndexError:
             pass
-    try:
-        base_url = "https://www.acmicpc.net"
-        img = soup.find("div", {"class": "problem-text"})
-        img_src = img.find("img")["src"]
-        img_url = base_url + img_src
-        problem["imgurl"] = img_url
-    except TypeError:
-        problem["imgurl"] = ""
 
     return problem
 

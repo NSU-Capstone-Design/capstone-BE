@@ -14,7 +14,6 @@ class ProblemInfo(models.Model):
     problem_content = models.TextField(verbose_name="문제 설명", null=True)
     problem_input = models.TextField(verbose_name="문제 입력 설명", null=True)
     problem_output = models.TextField(verbose_name="문제 출력 설명", null=True)
-    imgurl = models.TextField(null=True)
 
     def __str__(self):
         return self.title
