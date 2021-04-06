@@ -163,3 +163,4 @@ for i in page_data:
             print(link.get("href"))
             time.sleep(3)
             crawl_prob(link.get("href"), level=i)
+
