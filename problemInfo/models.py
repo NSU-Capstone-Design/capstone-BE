@@ -26,4 +26,4 @@ class IOExam(models.Model):
     is_input = models.BooleanField()
 
     def __str__(self):
-        return self.problem.__str__()
+        return self.problem.title
