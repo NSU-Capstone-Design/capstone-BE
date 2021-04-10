@@ -28,7 +28,4 @@ class ProblemSerializer(serializers.ModelSerializer):
             'problem_output',
             'ioexam_set',
             'imgurl']
-
-        )
         model = ProblemInfo
-
