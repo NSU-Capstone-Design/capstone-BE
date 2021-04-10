@@ -29,3 +29,9 @@ class ProblemSerializer(serializers.ModelSerializer):
             'ioexam_set',
             'imgurl']
         model = ProblemInfo
+
+
+class ProblemInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProblemInfo
+        fields = '__all__'
