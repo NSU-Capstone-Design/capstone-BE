@@ -1,9 +1,20 @@
 from rest_framework import serializers
-from .models import ProblemInfo
+from .models import ProblemInfo, IOExam
 
-class ProblemInfoserializer(serializers.ModelSerializer):
+
+class IOExamSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = (
+        model = IOExam
+        fields = '__all__'
+
+
+class ProblemSerializer(serializers.ModelSerializer):
+    ioexam_set = IOExamSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = ProblemInfo
+        fields = [
+            'prob_num',
             'title',
             'level',
             'timeout',
@@ -15,5 +26,9 @@ class ProblemInfoserializer(serializers.ModelSerializer):
             'problem_content',
             'problem_input',
             'problem_output',
+            'ioexam_set',
+            'imgurl']
+
         )
         model = ProblemInfo
+
