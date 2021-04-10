@@ -65,18 +65,33 @@ class UserInfoView(APIView):
 @permission_classes([AllowAny])
 def create_user(request):
     if request.method == 'POST':
+        print('2')
         serializer = UserCreateSerializer(data=request.data)
+        print('1')
         if not serializer.is_valid(raise_exception=True):
-            return Response({"message": "Request Body Error.", "code": 0}, status=status.HTTP_409_CONFLICT)
+            errorList = serializer.errors
+            select = list(errorList.keys())[0]
+            if errorList[select][0] == "duplicate ID":
+                return Response({"message": errorList["username"][0], "code": 2}, status=status.HTTP_409_CONFLICT)
+            if errorList[select][0] == "duplicate Email":
+                return Response({"message": errorList["email"][0], "code": 3}, status=status.HTTP_409_CONFLICT)
+            if errorList[select][0] == "problem_id unique constraint":
+                return Response({'message': errorList['username'][0], "code": 4}, status=status.HTTP_409_CONFLICT)
+        serializer.save()
+        return Response({"message": "ok", "code": 1}, status=status.HTTP_201_CREATED)
 
-        check_id = User.objects.filter(user_id=serializer.validated_data['user_id']).first()
-        check_email = User.objects.filter(email=serializer.validated_data['email']).first()
-        if check_id is None and check_email is None:
-            serializer.save()
-            return Response({"message": "ok", "code": 1}, status=status.HTTP_201_CREATED)
-        if check_id is not None:
-            print("id중복?")
-            return Response({"message": "duplicate ID", "code": 2}, status=status.HTTP_409_CONFLICT)
-        if check_email is not None:
-            print("email중복?")
-            return Response({"message": "duplicate Email", "code": 3}, status=status.HTTP_409_CONFLICT)
+    # serializer = UserCreateSerializer(data=request.data)
+    # if not serializer.is_valid(raise_exception=True):
+    #     return Response({"message": "Request Body Error.", "code": 0}, status=status.HTTP_409_CONFLICT)
+    #
+    # check_id = User.objects.filter(user_id=serializer.validated_data['user_id']).first()
+    # check_email = User.objects.filter(email=serializer.validated_data['email']).first()
+    # if check_id is None and check_email is None:
+    #     serializer.save()
+    #     return Response({"message": "ok", "code": 1}, status=status.HTTP_201_CREATED)
+    # if check_id is not None:
+    #     print("id중복?")
+    #     return Response({"message": "duplicate ID", "code": 2}, status=status.HTTP_409_CONFLICT)
+    # if check_email is not None:
+    #     print("email중복?")
+    #     return Response({"message": "duplicate Email", "code": 3}, status=status.HTTP_409_CONFLICT)

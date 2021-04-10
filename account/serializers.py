@@ -1,10 +1,12 @@
 from django.contrib.auth.models import update_last_login
 from rest_framework import serializers
-from account.models import User
-from levelTest.models import TestProblem
-from problemInfo.models import ProblemInfo
-from django.contrib.auth import get_user_model
+from rest_framework.exceptions import ValidationError
 
+from account.models import User
+# from levelTest.models import TestProblem
+# from problemInfo.models import ProblemInfo
+from django.contrib.auth import get_user_model
+from levelTest.serializers import CreateTestProblemSerializer
 
 User = get_user_model()
 
@@ -22,6 +24,23 @@ class UserCreateSerializer(serializers.Serializer):
     nickname = serializers.CharField(allow_blank=True, default="user")
 
     # student_id = serializers.CharField(max_length=10)
+    def validate_user_id(self, value):
+        check_id = User.objects.filter(user_id=value).first()
+        if check_id is not None:
+            raise ValidationError({
+                'message': 'duplicate ID',
+                'code': '2'
+            })
+        return value
+
+    def validate_email(self, value):
+        check_email = User.objects.filter(email=value).first()
+        if check_email is not None:
+            raise ValidationError({
+                'message': 'duplicate email',
+                'code': '2'
+            })
+        return value
 
     def create(self, validated_data):
         user = User.objects.create(
@@ -30,16 +49,23 @@ class UserCreateSerializer(serializers.Serializer):
             nickname=validated_data['nickname'] if validated_data['nickname'] else "user"
         )
         user.set_password(validated_data['password'])
-        print("serializer create")
         user.save()
+        print("serializer create")
         for prob in testProbs:
-            testProb = TestProblem.objects.create(
-                number=prob["num"],
-                user=user,
-                weight=prob["weight"],
-                problem_id=prob["prob_num"]
-            )
-            testProb.save()
+            prob["user"] = user.id
+            testProbSerializer = CreateTestProblemSerializer(data=prob)
+            print("작동?")
+            if not testProbSerializer.is_valid():
+                errorList = testProbSerializer.errors
+                print(errorList)
+                select = list(errorList.keys())[0]
+                print(select, "last")
+                if errorList[select][0] == "problem_id unique constraint":
+                    User.delete(user)
+                    raise serializers.ValidationError({'msg': "problem_id unique constraint!"})
+
+            testProbSerializer.save()
+
         return user
 
     # def updata(self, validated_data):
