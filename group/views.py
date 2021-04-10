@@ -1,20 +1,45 @@
-
 from rest_framework import status
 from rest_framework.response import Response
 from .models import GroupManage, Group
 from .serializers import GroupSerializer, GroupManageSerializer
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+import jwt
+from django.conf import settings
+from account.models import User
+from rest_framework.decorators import permission_classes
 
 class GroupListAPIView(APIView):
+    permission_classes(IsAuthenticated, )
+
     def post(self, request):
-        serializer = GroupSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
+        if token == None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
+                user = User.objects.get(id=user_pk)
+                content = {
+                    request.data['group_name'],
+                    request.data['introduce'],
+                    request.data['group_visible'],
+                    user
+                }
+                serializer = GroupSerializer(content)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                content = {
+                    'message': "잘못된 토큰값이 들어왔습니다."
+                }
+                return Response(content)
 
     def get(self, request):
         serializer = GroupSerializer(Group.objects.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class GroupManageListAPIView(APIView):
     def post(self, request):
@@ -24,8 +49,9 @@ class GroupManageListAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self,request):
+    def get(self, request):
         serializer = GroupManageSerializer(GroupManage.objects.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 from django.shortcuts import get_object_or_404
 
@@ -45,7 +71,7 @@ class GroupDetailAPIView(APIView):
             serializer = GroupSerializer(group)
             group.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        elif request.data['description'] is not '':
+        elif request.data['description'] != '':
             group.description = request.data['description']
             serializer = GroupSerializer(group)
             group.save()
@@ -85,8 +111,3 @@ class GroupManageDetailAPIView(APIView):
         groupmanage = self.get_object(pk)
         groupmanage.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-
