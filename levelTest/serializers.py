@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 
 from account.models import User
 from levelTest.models import TestProblem, Score
+from problemInfo.models import ProblemInfo
 from problemInfo.serializers import ProblemSerializer
 
 
@@ -27,9 +28,12 @@ class CreateTestProblemSerializer(serializers.Serializer):
     prob_num = serializers.IntegerField(required=True)
 
     def validate_prob_num(self, value):
-        check = TestProblem.objects.filter(id=value).first()
+        check = ProblemInfo.objects.filter(prob_num=value).first()
         if check is None:
-            raise ValidationError("problem doesn't exist")
+            raise ValidationError({
+                'message': "problem doesn't exist",
+                'code': True
+            })
         return value
 
     def create(self, validated_data):

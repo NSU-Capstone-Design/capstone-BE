@@ -68,17 +68,11 @@ def create_user(request):
         print('2')
         serializer = UserCreateSerializer(data=request.data)
         print('1')
-        if not serializer.is_valid(raise_exception=True):
-            errorList = serializer.errors
-            select = list(errorList.keys())[0]
-            if errorList[select][0] == "duplicate ID":
-                return Response({"message": errorList["username"][0], "code": 2}, status=status.HTTP_409_CONFLICT)
-            if errorList[select][0] == "duplicate Email":
-                return Response({"message": errorList["email"][0], "code": 3}, status=status.HTTP_409_CONFLICT)
-            if errorList[select][0] == "problem_id unique constraint":
-                return Response({'message': errorList['username'][0], "code": 4}, status=status.HTTP_409_CONFLICT)
-        serializer.save()
-        return Response({"message": "ok", "code": 1}, status=status.HTTP_201_CREATED)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({"message": "ok", "code": 1}, status=status.HTTP_201_CREATED)
+        else :
+            return Response({"message": "error", "code": 0}, status=status.HTTP_400_BAD_REQUEST)
 
     # serializer = UserCreateSerializer(data=request.data)
     # if not serializer.is_valid(raise_exception=True):

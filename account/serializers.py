@@ -29,7 +29,7 @@ class UserCreateSerializer(serializers.Serializer):
         if check_id is not None:
             raise ValidationError({
                 'message': 'duplicate ID',
-                'code': '2'
+                'code': True
             })
         return value
 
@@ -38,7 +38,7 @@ class UserCreateSerializer(serializers.Serializer):
         if check_email is not None:
             raise ValidationError({
                 'message': 'duplicate email',
-                'code': '2'
+                'code': True
             })
         return value
 
@@ -50,19 +50,17 @@ class UserCreateSerializer(serializers.Serializer):
         )
         user.set_password(validated_data['password'])
         user.save()
-        print("serializer create")
         for prob in testProbs:
             prob["user"] = user.id
             testProbSerializer = CreateTestProblemSerializer(data=prob)
-            print("작동?")
             if not testProbSerializer.is_valid():
                 errorList = testProbSerializer.errors
                 print(errorList)
                 select = list(errorList.keys())[0]
                 print(select, "last")
-                if errorList[select][0] == "problem_id unique constraint":
+                if errorList[select]['code']:
                     User.delete(user)
-                    raise serializers.ValidationError({'msg': "problem_id unique constraint!"})
+                    raise serializers.ValidationError(errorList)
 
             testProbSerializer.save()
 
