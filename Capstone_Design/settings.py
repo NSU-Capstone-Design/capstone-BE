@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'pygments',
     'account.apps.AccountConfig',
     'group.apps.GroupConfig',
-    'problemInfo.apps.ProbleminfoConfig',
+    'levelTest.apps.LeveltestConfig',
+    'problemInfo.apps.ProbleminfoConfig'
     'question.apps.QuestionConfig'
 ]
 
@@ -73,7 +74,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -161,7 +162,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # 2021-02-14 김지수: 한국 시간대로 변경
 LANGUAGE_CODE = 'ko-kr'
 TIME_ZONE = 'Asia/Seoul'
-USE_TZ = False  # 한국 시간대로 사용하므로 false
+USE_TZ = False # 한국 시간대로 사용하므로 false
 
 USE_I18N = True
 
