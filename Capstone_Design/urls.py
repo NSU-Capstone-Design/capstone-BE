@@ -10,4 +10,5 @@ urlpatterns = [
     path('users/', include('account.urls')),
     path('level/', include('levelTest.urls')),
     path('groups/', include('group.urls')),
+    path('question/', include('question.urls')),
 ]
