@@ -23,4 +23,5 @@ urlpatterns = [
     path('problem/', include('problemInfo.urls')),
     path('users/', include('account.urls')),
     path('groups/', include('group.urls')),
+    path('question/', include('question.urls')),
 ]

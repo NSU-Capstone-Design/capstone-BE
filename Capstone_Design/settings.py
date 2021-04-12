@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'pygments',
     'account.apps.AccountConfig',
     'group.apps.GroupConfig',
-    'problemInfo.apps.ProbleminfoConfig'
+    'problemInfo.apps.ProbleminfoConfig',
+    'question.apps.QuestionConfig'
 ]
 
 MIDDLEWARE = [
@@ -160,7 +161,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # 2021-02-14 김지수: 한국 시간대로 변경
 LANGUAGE_CODE = 'ko-kr'
 TIME_ZONE = 'Asia/Seoul'
-USE_TZ = False # 한국 시간대로 사용하므로 false
+USE_TZ = False  # 한국 시간대로 사용하므로 false
 
 USE_I18N = True
 
