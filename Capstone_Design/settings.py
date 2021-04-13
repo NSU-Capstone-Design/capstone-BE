@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'group.apps.GroupConfig',
     'levelTest.apps.LeveltestConfig',
-    'problemInfo.apps.ProbleminfoConfig'
+    'problemInfo.apps.ProbleminfoConfig',
     'question.apps.QuestionConfig'
 ]
 
