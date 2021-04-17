@@ -8,52 +8,77 @@ import jwt
 from django.conf import settings
 from account.models import User
 from rest_framework.decorators import permission_classes
+from django.db import IntegrityError
+
 
 class GroupListAPIView(APIView):
     permission_classes(IsAuthenticated, )
 
-    def post(self, request):
+    def get_object(self, request):
         token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
-        if token == None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        else:
+        if token:
             try:
                 user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
-                user = User.objects.get(id=user_pk)
-                content = {
-                    request.data['group_name'],
-                    request.data['introduce'],
-                    request.data['group_visible'],
-                    user
-                }
-                serializer = GroupSerializer(content)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            except:
-                content = {
-                    'message': "잘못된 토큰값이 들어왔습니다."
-                }
-                return Response(content)
+                return User.objects.get(id=user_pk)
+            except Exception as e:
+                return False
+        else:
+            return False
 
-    def get(self, request):
-        serializer = GroupSerializer(Group.objects.all(), many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class GroupManageListAPIView(APIView):
     def post(self, request):
-        serializer = GroupManageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if self.get_object(request):
+            userInfo = self.get_object(request)
+
+            if userInfo.is_admin:
+                group = {
+                    'group_name': request.data['group_name'],
+                    'introduce': request.data['introduce'],
+                    'group_visible': request.data['group_visible'],
+                    'group_master': userInfo.id
+                }
+                serializer = GroupSerializer(data=group)
+
+                try:
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                except IntegrityError as e:
+                    if 'UNIQUE constraint' in e.args[0]:
+                        content = {
+                            "Errormsg" :
+                                (userInfo.nickname + "님은 이미 '" +
+                                group['group_name'] + "'(이)라는 그룹명을 가지고 있습니다.")
+                        }
+                        return Response(content,status=status.HTTP_400_BAD_REQUEST)
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            content = {
+                'message': "그룹 생성 권한이 없습니다."
+            }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        content = {
+            'message': "로그인 후 사용가능합니다."
+        }
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        serializer = GroupManageSerializer(GroupManage.objects.all(), many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-from django.shortcuts import get_object_or_404
+        if self.get_object(request):
+            userInfo = self.get_object(request)
+            if userInfo.expert_user:
+                groupInfo = Group.objects.filter(group_master=userInfo)
+                serializer = GroupSerializer(groupInfo, many=True)
+                return Response(serializer.data)
+            content = {
+                'message': "이쉬끼 전문가 아님"
+            }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            content = {
+                'message': "로그인 안함"
+            }
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 class GroupDetailAPIView(APIView):
     def get_object(self, pk):
@@ -82,9 +107,29 @@ class GroupDetailAPIView(APIView):
 
     def delete(self, request, pk):
         group = self.get_object(pk)
-        #중간에 길드장과 일치하는 사용자인지 체크해야되는 함수가 필요한가?
+        # 중간에 길드장과 일치하는 사용자인지 체크해야되는 함수가 필요한가?
         group.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class GroupManageListAPIView(APIView):
+    def post(self, request):
+        serializer = GroupManageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        serializer = GroupManageSerializer(GroupManage.objects.all(), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+from django.shortcuts import get_object_or_404
+
+
+
+
 
 class GroupManageDetailAPIView(APIView):
     def get_object(self, pk):
