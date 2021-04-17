@@ -69,20 +69,98 @@ class UserCreateSerializer(serializers.Serializer):
     # def updata(self, validated_data):
 
 
+# testProbs = [
+#     {
+#         "num": 1,
+#         "weight": 3,
+#         "prob_num": 15733
+#     },
+#     {
+#         "num": 2,
+#         "weight": 3,
+#         "prob_num": 14928
+#     },
+#     {
+#         "num": 3,
+#         "weight": 3,
+#         "prob_num": 15727
+#     },
+# ]
+
 testProbs = [
     {
         "num": 1,
-        "weight": 3,
-        "prob_num": 15733
+        "weight": 1,
+        "prob_num": 10172
     },
     {
         "num": 2,
-        "weight": 3,
-        "prob_num": 14928
+        "weight": 2,
+        "prob_num": 14681
     },
     {
         "num": 3,
         "weight": 3,
-        "prob_num": 15727
+        "prob_num": 2439
+    },
+    {
+        "num": 4,
+        "weight": 4,
+        "prob_num": 2577
+    },
+    {
+        "num": 5,
+        "weight": 5,
+        "prob_num": 2869
+    },
+    {
+        "num": 6,
+        "weight": 6,
+        "prob_num": 1018
+    },
+    {
+        "num": 7,
+        "weight": 7,
+        "prob_num": 10845
+    },
+    {
+        "num": 8,
+        "weight": 8,
+        "prob_num": 2606
+    },
+    {
+        "num": 9,
+        "weight": 9,
+        "prob_num": 1912
+    },
+    {
+        "num": 10,
+        "weight": 10,
+        "prob_num": 1927
+    },
+    {
+        "num": 11,
+        "weight":11,
+        "prob_num": 1753
+    },
+    {
+        "num": 12,
+        "weight": 12,
+        "prob_num": 1922
+    },
+    {
+        "num": 13,
+        "weight": 13,
+        "prob_num": 1613
+    },
+    {
+        "num": 14,
+        "weight": 14,
+        "prob_num": 1753
+    },
+    {
+        "num": 15,
+        "weight": 15,
+        "prob_num": 2585
     },
 ]
