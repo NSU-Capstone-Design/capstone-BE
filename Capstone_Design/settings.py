@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'pygments',
     'account.apps.AccountConfig',
     'group.apps.GroupConfig',
-    'problemInfo.apps.ProbleminfoConfig'
+    'levelTest.apps.LeveltestConfig',
+    'problemInfo.apps.ProbleminfoConfig',
+    'question.apps.QuestionConfig'
 ]
 
 MIDDLEWARE = [
@@ -72,8 +74,9 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=2),
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,

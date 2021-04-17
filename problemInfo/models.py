@@ -2,6 +2,7 @@ from django.db import models
 
 
 class ProblemInfo(models.Model):
+    prob_num = models.IntegerField(verbose_name="문제고유번호", primary_key=True)
     title = models.CharField(verbose_name="제목", max_length=50)
     level = models.IntegerField(verbose_name="문제 레벨", default=-1)
     timeout = models.CharField(verbose_name="시간 제한", max_length=50)
@@ -20,10 +21,10 @@ class ProblemInfo(models.Model):
 
 
 class IOExam(models.Model):
-    problem = models.ForeignKey(ProblemInfo, on_delete=models.CASCADE)
+    problem = models.ForeignKey(ProblemInfo, on_delete=models.PROTECT, null=True)
     value = models.CharField(max_length=255)
     io_num = models.IntegerField()
     is_input = models.BooleanField()
 
     def __str__(self):
-        return self.problem.title
+        return self.problem.__str__()

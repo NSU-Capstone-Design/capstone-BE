@@ -24,11 +24,12 @@ def crawl_prob(url, level):
         print("server could not be found")
 
     soup = BeautifulSoup(html, "html5lib")
-
+    prob_num = int(url.split("/")[-1])
     problem = {}
 
     problem_data = problem_info(soup, problem)
-    problem_pk = ProblemInfo(title=problem_data["title"],
+    problem_pk = ProblemInfo(prob_num=prob_num,
+                             title=problem_data["title"],
                              level=level,
                              timeout=problem_data["timeout"],
                              memory_limit=problem_data["memory_limit"],
@@ -68,9 +69,9 @@ def problem_info(soup, problem):
         problem["correct_answer_rate"] = problem_info_list[5].text
 
     problem_content_info = ""
-    problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol"])
+    problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol", "img"])
     for i in problem_content:
-        problem_content_info = problem_content_info + str(i.text)
+        problem_content_info = problem_content_info + str(i.text) + str(i.get("src")).replace("None", "")
     problem["problem_content"] = problem_content_info
 
     problem_input_info = ""
