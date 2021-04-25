@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'group.apps.GroupConfig',
     'levelTest.apps.LeveltestConfig',
     'problemInfo.apps.ProbleminfoConfig',
-    'question.apps.QuestionConfig'
+    'question.apps.QuestionConfig',
+    'solved_problem.apps.SolvedProblemConfig'
 ]
 
 MIDDLEWARE = [
