@@ -14,4 +14,3 @@ class ProblemInfoView(APIView):
     def get(self, request):
         serializer = ProblemInfoSerializer(ProblemInfo.objects.all(), many=True)
         return Response(serializer.data)
-
