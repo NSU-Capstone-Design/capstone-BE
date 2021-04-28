@@ -1,12 +1,14 @@
 from rest_framework import serializers
 from . import models
-from django.contrib.contenttypes.models import ContentType
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='user_id.user_id')
+    nickname = serializers.ReadOnlyField(source='user_id.nickname')
+
     class Meta:
         model = models.Question
-        fields = ['user_id', 'prob_num', 'subject', 'content', 'created_at', 'updated_at']
+        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):

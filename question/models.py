@@ -13,12 +13,18 @@ class Question(models.Model):
     content = models.TextField(verbose_name="내용")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="작성시간")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="수정시간")
+    post_hit = models.PositiveIntegerField(default=1)
 
     class Meta:
         ordering = ('created_at',)
 
     def __str__(self):
         return self.subject
+
+    @property
+    def update_counter(self):
+        self.post_hit += 1
+        self.save()
 
 
 class Answer(models.Model):
