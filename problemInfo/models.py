@@ -18,6 +18,10 @@ class ProblemInfo(models.Model):
     def __str__(self):
         return self.title
 
+    # def __eq__(self, other):
+    #     print(other,'!check!')
+    #     return self.prob_num == other.prob_num
+
 
 class IOExam(models.Model):
     problem = models.ForeignKey(ProblemInfo, on_delete=models.PROTECT, null=True)

@@ -1,14 +1,13 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-import jwt
-from django.conf import settings
 from .models import User
-import json
+from django.conf import settings
+import jwt
+
 from .serializers import UserSerializer, UserCreateSerializer
+from rest_framework.decorators import api_view, permission_classes
 
 
 # 인증이 필요한 요청 예제
@@ -59,6 +58,8 @@ class UserInfoView(APIView):
                     'message': "잘못된 토큰값이 들어왔습니다."
                 }
                 return Response(content)
+
+
 
 
 @api_view(['POST'])
