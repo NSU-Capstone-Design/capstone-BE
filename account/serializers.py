@@ -1,7 +1,6 @@
 from django.contrib.auth.models import update_last_login
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
 from account.models import User
 # from levelTest.models import TestProblem
 # from problemInfo.models import ProblemInfo
@@ -67,25 +66,6 @@ class UserCreateSerializer(serializers.Serializer):
         return user
 
     # def updata(self, validated_data):
-
-
-# testProbs = [
-#     {
-#         "num": 1,
-#         "weight": 3,
-#         "prob_num": 15733
-#     },
-#     {
-#         "num": 2,
-#         "weight": 3,
-#         "prob_num": 14928
-#     },
-#     {
-#         "num": 3,
-#         "weight": 3,
-#         "prob_num": 15727
-#     },
-# ]
 
 testProbs = [
     {
@@ -164,3 +144,95 @@ testProbs = [
         "prob_num": 2585
     },
 ]
+
+
+# testProbs = [
+#     {
+#         "num": 1,
+#         "weight": 3,
+#         "prob_num": 15733
+#     },
+#     {
+#         "num": 2,
+#         "weight": 3,
+#         "prob_num": 14928
+#     },
+#     {
+#         "num": 3,
+#         "weight": 3,
+#         "prob_num": 15727
+#     },
+# ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
