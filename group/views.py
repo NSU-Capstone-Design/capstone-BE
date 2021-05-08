@@ -86,8 +86,17 @@ class GroupDetailAPIView(APIView):
 
     def get(self, request, pk):
         group = self.get_object(pk)
+        memberList = GroupManage.objects.filter(group_id=group)
+        print(memberList)
         serializer = GroupSerializer(group)
-        return Response(serializer.data)
+        print(serializer.data)
+        serializer_m = GroupManageSerializer(memberList, many=True)
+        data = [
+            serializer.data,
+            serializer_m.data
+        ]
+        print(data)
+        return Response(data)
 
     def put(self, request, pk):
         group = self.get_object(pk)
@@ -126,10 +135,6 @@ class GroupManageListAPIView(APIView):
 
 
 from django.shortcuts import get_object_or_404
-
-
-
-
 
 class GroupManageDetailAPIView(APIView):
     def get_object(self, pk):
