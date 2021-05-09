@@ -38,7 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_id = models.CharField(verbose_name="아이디", max_length=64, unique=True)
     email = models.EmailField(verbose_name="이메일", max_length=255, unique=True, null=True)
     nickname = models.CharField(verbose_name="닉네임", max_length=50, null=True, blank=True, default='user')
-    level = models.CharField(verbose_name="레벨", max_length=20, null=True, default=None, blank=True)
+    level = models.IntegerField(verbose_name="레벨",null=True, default=None, blank=True)
     expert_user = models.BooleanField(verbose_name="전문가여부", default=False)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)

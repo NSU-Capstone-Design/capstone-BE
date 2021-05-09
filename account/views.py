@@ -1,14 +1,13 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-import jwt
-from django.conf import settings
 from .models import User
-import json
+from django.conf import settings
+import jwt
+
 from .serializers import UserSerializer, UserCreateSerializer
+from rest_framework.decorators import api_view, permission_classes
 
 
 # 인증이 필요한 요청 예제
@@ -71,7 +70,7 @@ def create_user(request):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response({"message": "ok", "code": 1}, status=status.HTTP_201_CREATED)
-        else :
+        else:
             return Response({"message": "error", "code": 0}, status=status.HTTP_400_BAD_REQUEST)
 
     # serializer = UserCreateSerializer(data=request.data)
@@ -89,3 +88,43 @@ def create_user(request):
     # if check_email is not None:
     #     print("email중복?")
     #     return Response({"message": "duplicate Email", "code": 3}, status=status.HTTP_409_CONFLICT)
+
+
+class IncreaseLevelView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
+
+        if token is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
+            user = User.objects.get(id=user_pk)
+            print(user)
+            if user.level < 20:
+                user.level = user.level + 1
+                user.save()
+                print(user.level)
+                return Response(status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class DecreaseLevelView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
+
+        if token is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
+            user = User.objects.get(id=user_pk)
+            if user.level > 1:
+                user.level = user.level - 1
+                user.save()
+                return Response(status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)

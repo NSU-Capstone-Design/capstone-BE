@@ -11,4 +11,5 @@ urlpatterns = [
     path('level/', include('levelTest.urls')),
     path('groups/', include('group.urls')),
     path('question/', include('question.urls')),
+    path('solved_problem/', include('solved_problem.urls')),
 ]
