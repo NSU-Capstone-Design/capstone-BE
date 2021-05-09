@@ -3,11 +3,20 @@ from . import models
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='user_id.user_id')
+    user_id = serializers.ReadOnlyField(source='user_id.user_id')
     nickname = serializers.ReadOnlyField(source='user_id.nickname')
 
     class Meta:
         model = models.Question
+        fields = '__all__'
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+    user_id = serializers.ReadOnlyField(source='user_id.user_id')
+    nickname = serializers.ReadOnlyField(source='user_id.nickname')
+
+    class Meta:
+        model = models.Answer
         fields = '__all__'
 
 
