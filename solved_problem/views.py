@@ -24,6 +24,8 @@ class SolveSuccessView(APIView):
 
 
 class SolvePassView(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def post(self, request):
         token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
         prob_id = request.data["prob_id"]

@@ -36,11 +36,12 @@ class UserProblemInfo(APIView):
                 user = User.objects.get(id=user_pk)
             except Exception as e:
                 return Response(e, status.HTTP_400_BAD_REQUEST)
+            print('level', user.level)
             userLevelProbs = list(ProblemInfo.objects.filter(level=user.level))
             solvedProblems = SolvedProblem.objects.filter(user=user)
             levelSolvedProblems = []
-            # print(userLevelProbs)
-            # print(solvedProblems)
+            print('userLevelProbs', userLevelProbs)
+            print(solvedProblems)
             for p in solvedProblems:
                 if p.prob.level == user.level:
                     levelSolvedProblems.append(p.prob)
@@ -57,10 +58,13 @@ class UserProblemInfo(APIView):
                 passedProbsQuery = SolvedProblem.objects.filter(Q(user=user) & Q(correct=False))
                 passedProbs = []
                 for sp in passedProbsQuery:
-                    passedProbs.append(sp.prob)
+                    if sp.prob.level == user.level:
+                        passedProbs.append(sp.prob)
                 if len(passedProbs) == 0:
-                    return Response(status.HTTP_406_NOT_ACCEPTABLE)
+                    return Response({"user_level": user.level}, status.HTTP_406_NOT_ACCEPTABLE)
                 passedProb = random.choice(passedProbs)
                 serializer = ProblemSerializer(passedProb)
+                ctx = serializer.data
+                ctx['user_level'] = user.level
 
-        return Response(serializer.data, status.HTTP_200_OK)
+        return Response(ctx, status.HTTP_200_OK)
