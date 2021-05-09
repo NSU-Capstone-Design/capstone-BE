@@ -27,8 +27,3 @@ class ProblemSerializer(serializers.ModelSerializer):
             'problem_output',
             'ioexam_set']
         model = ProblemInfo
-
-class ProblemInfoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProblemInfo
-        fields = '__all__'
