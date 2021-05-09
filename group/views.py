@@ -69,11 +69,21 @@ class GroupListAPIView(APIView):
             if userInfo.expert_user:
                 groupInfo = Group.objects.filter(group_master=userInfo)
                 serializer = GroupSerializer(groupInfo, many=True)
-                return Response(serializer.data)
-            content = {
-                'message': "이쉬끼 전문가 아님"
-            }
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                data = [
+                    {'isExpertUser': userInfo.expert_user},
+                    serializer.data
+                ]
+                return Response(data)
+            groupInfo = GroupManage.objects.filter(member = userInfo)
+            groupList = []
+            for x in groupInfo:
+                groupList.append(x.group_id)
+            serializer = GroupSerializer(groupList, many=True)
+            data = [
+                    {'isExpertUser': userInfo.expert_user},
+                    serializer.data
+            ]
+            return Response(data)
         else:
             content = {
                 'message': "로그인 안함"
@@ -86,8 +96,17 @@ class GroupDetailAPIView(APIView):
 
     def get(self, request, pk):
         group = self.get_object(pk)
+        memberList = GroupManage.objects.filter(group_id=group)
+        print(memberList)
         serializer = GroupSerializer(group)
-        return Response(serializer.data)
+        print(serializer.data)
+        serializer_m = GroupManageSerializer(memberList, many=True)
+        data = [
+            serializer.data,
+            serializer_m.data
+        ]
+        print(data)
+        return Response(data)
 
     def put(self, request, pk):
         group = self.get_object(pk)
@@ -126,10 +145,6 @@ class GroupManageListAPIView(APIView):
 
 
 from django.shortcuts import get_object_or_404
-
-
-
-
 
 class GroupManageDetailAPIView(APIView):
     def get_object(self, pk):

@@ -25,6 +25,7 @@ class Question(models.Model):
     def update_counter(self):
         self.post_hit += 1
         self.save()
+        return None
 
 
 class Answer(models.Model):
