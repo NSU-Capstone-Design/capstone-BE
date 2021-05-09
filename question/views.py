@@ -22,6 +22,7 @@ def post_list(request):
         return
 
     parameter = request.query_params.dict()
+    Question.objects.filter()
 
     try:
         page = int(parameter['page'])  # 페이지 숫자, 페이지에는 10 개의 글을 보여주는 것으로 간주
