@@ -18,7 +18,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class GroupManageSerializer(serializers.ModelSerializer):
     member = UserSerializer()
-
+    group_id = GroupSerializer()
+    
     class Meta:
         model = GroupManage
         fields = [

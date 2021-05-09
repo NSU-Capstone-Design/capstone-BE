@@ -69,11 +69,21 @@ class GroupListAPIView(APIView):
             if userInfo.expert_user:
                 groupInfo = Group.objects.filter(group_master=userInfo)
                 serializer = GroupSerializer(groupInfo, many=True)
-                return Response(serializer.data)
-            content = {
-                'message': "이쉬끼 전문가 아님"
-            }
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                data = [
+                    {'isExpertUser': userInfo.expert_user},
+                    serializer.data
+                ]
+                return Response(data)
+            groupInfo = GroupManage.objects.filter(member = userInfo)
+            groupList = []
+            for x in groupInfo:
+                groupList.append(x.group_id)
+            serializer = GroupSerializer(groupList, many=True)
+            data = [
+                    {'isExpertUser': userInfo.expert_user},
+                    serializer.data
+            ]
+            return Response(data)
         else:
             content = {
                 'message': "로그인 안함"
