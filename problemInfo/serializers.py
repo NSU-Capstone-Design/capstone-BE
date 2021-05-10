@@ -7,6 +7,7 @@ class IOExamSerializer(serializers.ModelSerializer):
         model = IOExam
         fields = '__all__'
 
+
 class ProblemSerializer(serializers.ModelSerializer):
     ioexam_set = IOExamSerializer(many=True, read_only=True)
 

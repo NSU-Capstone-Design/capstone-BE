@@ -13,12 +13,14 @@ from .models import ProblemInfo
 from .serializers import ProblemSerializer
 from django.db.models import Q
 
+
 class ProblemInfoView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
         serializer = ProblemSerializer(ProblemInfo.objects.all(), many=True)
         return Response(serializer.data)
+
 
 class ProblemDetailView(APIView):
     permission_classes = (AllowAny,)
