@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from .models import User, Question, Answer, Comment
-from .serializers import QuestionSerializer, AnswerSerializer, CommentSerializer
+from .serializers import QuestionSaveSerializer, AnswerSaveSerializer, CommentSaveSerializer, QuestionSerializer, AnswerSerializer, CommentSerializer
 from django.db.models import Q
 import math
 import jwt
@@ -38,7 +38,7 @@ class QuestionWriteView(APIView):
                 'content': request.data['content'],
                 'prob_num': request.data['problem'],
             }
-            question = QuestionSerializer(data=request_data)
+            question = QuestionSaveSerializer(data=request_data)
         except LookupError:
             question = None
         return question
@@ -52,7 +52,7 @@ class QuestionWriteView(APIView):
                 'content': request.data['content'],
                 'question': request.data['question'],
             }
-            answer = AnswerSerializer(data=request_data)
+            answer = AnswerSaveSerializer(data=request_data)
         except LookupError:
             answer = None
         return answer
@@ -83,7 +83,7 @@ class QuestionWriteView(APIView):
                 'content_type': content_id,
                 'reply_to': refer_id,
             }
-            comment = CommentSerializer(data=request_data)
+            comment = CommentSaveSerializer(data=request_data)
         except LookupError:
             comment = None
         return comment
