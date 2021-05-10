@@ -64,9 +64,7 @@ class UserInfoView(APIView):
 @permission_classes([AllowAny])
 def create_user(request):
     if request.method == 'POST':
-        print('2')
         serializer = UserCreateSerializer(data=request.data)
-        print('1')
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response({"message": "ok", "code": 1}, status=status.HTTP_201_CREATED)
@@ -127,4 +125,22 @@ class DecreaseLevelView(APIView):
                 user.save()
                 return Response(status=status.HTTP_200_OK)
             else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class WithdrawalView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
+
+        if token is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
+                User.objects.get(id=user_pk).delete()
+                return Response(status=status.HTTP_200_OK)
+            except Exception as e:
+                print(e)
                 return Response(status=status.HTTP_400_BAD_REQUEST)

@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from account.serializers import UserSerializer
 from . import models
 
 
@@ -22,6 +24,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     replies = serializers.SerializerMethodField(read_only=True, method_name="get_reply")
+    user_id = UserSerializer(read_only=True)
 
     class Meta:
         model = models.Comment

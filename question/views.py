@@ -61,24 +61,28 @@ class QuestionWriteView(APIView):
     @staticmethod
     def make_comment(request):
         try:
-            request_data = {
-                'user_id': request.user.id,
-                'content': request.data['content'],
-                'object_id': request.data['object_id'],
-                'content_type': ContentType.objects.get_for_model(Question).id,
-                'reply_to': None,
-            }
+            if request.data["where"] == "comment":
+                request_data = {
+                    'user_id': request.user.id,
+                    'content': request.data['content'],
+                    'object_id': request.data['object_id'],
+                    'content_type': ContentType.objects.get_for_model(Comment).id,
+                    'reply_to': request.data["reply_to"],
+                }
             comment = CommentSerializer(data=request_data)
-        except LookupError:
+        except LookupError as e:
             comment = None
         return comment
 
     def post(self, request):
+        print(request.data)
         if not self.get_object(request):
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
         # choose writing type as request element
-        def crossroad(x): return x in request.data
+        def crossroad(x):
+            return x in request.data
+
         if crossroad('problem'):
             # 게시글 작성
             serializer = self.make_question(request)
@@ -154,11 +158,11 @@ def post_list(request):
 
     end_index = page * view_count
     start_index = end_index - view_count
-    total_page = {"total_page":  math.ceil(Question.objects.filter().count() / view_count)}
+    total_page = {"total_page": math.ceil(Question.objects.filter().count() / view_count)}
 
     result = Question.objects \
-        .filter(Q(subject__contains=keyword) | Q(content__contains=keyword)) \
-        .order_by('-id')[start_index:end_index]
+                 .filter(Q(subject__contains=keyword) | Q(content__contains=keyword)) \
+                 .order_by('-id')[start_index:end_index]
 
     json_result = QuestionSerializer(result, many=True).data
     json_result.insert(0, total_page)
