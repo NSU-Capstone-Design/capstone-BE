@@ -24,7 +24,7 @@ class Group(models.Model):
 class GroupManage(models.Model):
     group_id = models.ForeignKey(Group, verbose_name='그룹명', on_delete=models.CASCADE)
     member = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='가입자', on_delete=models.CASCADE)
-    status = models.BooleanField(verbose_name='가입승인여부', default=False)
+    status = models.BooleanField(verbose_name='가입승인여부', default=True)
 
     class Meta:
         constraints = [

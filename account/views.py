@@ -26,15 +26,8 @@ class AllUserListView(APIView):
 
     def post(self, request):
         if self.get_object(request):
-            userInfo = self.get_object(request)
-            group_name = request.data["group_name"]
-
             userList = User.objects.filter(expert_user=False) #전문가가 아닌 모든 유저
-            group = Group.objects.get(group_name=group_name)
-            alreadyIn = GroupManage.objects.filter(group_id=group) #그룹에 속해있는 유저
-
             serializer = UserSerializer(userList, many=True).data
-
             return Response(serializer)
         content = {
             'message': "로그인 후 사용가능합니다."

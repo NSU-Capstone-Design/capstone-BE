@@ -10,6 +10,7 @@ from account.models import User
 from rest_framework.decorators import permission_classes
 from django.db import IntegrityError
 
+
 class GroupListAPIView(APIView):
     permission_classes(IsAuthenticated, )
 
@@ -45,11 +46,11 @@ class GroupListAPIView(APIView):
                 except IntegrityError as e:
                     if 'UNIQUE constraint' in e.args[0]:
                         content = {
-                            "Errormsg" :
+                            "Errormsg":
                                 (userInfo.nickname + "님은 이미 '" +
-                                group['group_name'] + "'(이)라는 그룹명을 가지고 있습니다.")
+                                 group['group_name'] + "'(이)라는 그룹명을 가지고 있습니다.")
                         }
-                        return Response(content,status=status.HTTP_400_BAD_REQUEST)
+                        return Response(content, status=status.HTTP_400_BAD_REQUEST)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             content = {
@@ -73,14 +74,14 @@ class GroupListAPIView(APIView):
                     serializer.data
                 ]
                 return Response(data)
-            groupInfo = GroupManage.objects.filter(member = userInfo)
+            groupInfo = GroupManage.objects.filter(member=userInfo)
             groupList = []
             for x in groupInfo:
                 groupList.append(x.group_id)
             serializer = GroupSerializer(groupList, many=True)
             data = [
-                    {'isExpertUser': userInfo.expert_user},
-                    serializer.data
+                {'isExpertUser': userInfo.expert_user},
+                serializer.data
             ]
             return Response(data)
         else:
@@ -88,6 +89,7 @@ class GroupListAPIView(APIView):
                 'message': "로그인 안함"
             }
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
 
 class GroupDetailAPIView(APIView):
     def get_object(self, pk):
@@ -126,21 +128,25 @@ class GroupManageListAPIView(APIView):
     def get_object(self, pk):
         return get_object_or_404(Group, pk=pk)
 
-    def post(self, request):
-        serializer = GroupManageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, pk):
+        group = Group.objects.get(pk=pk)
+        user = User.objects.get(user_id=request.data['member'])
+        groupmanage = GroupManage.objects.create(
+            group_id=group,
+            member=user,
+        )
+        serializer = GroupManageSerializer(groupmanage)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, pk):
         group = self.get_object(pk)
-        groupManage = GroupManage.objects.filter(group_id= group)
+        groupManage = GroupManage.objects.filter(group_id=group)
         serializer = GroupManageSerializer(groupManage, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 from django.shortcuts import get_object_or_404
+
 
 class GroupManageDetailAPIView(APIView):
     def get_object(self, pk):
