@@ -69,21 +69,21 @@ def problem_info(soup, problem):
         problem["correct_answer_rate"] = problem_info_list[5].text
 
     problem_content_info = ""
-    problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol", "img"])
+    problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol", "table", "ul"])
     for i in problem_content:
         problem_content_info = problem_content_info + str(i).replace("/upload/", baseUrl)
     problem["problem_content"] = problem_content_info
 
     problem_input_info = ""
-    problem_input = soup.select("#problem_input > p")
+    problem_input = soup.select("#problem_input")[0].find_all(["p", "pre", "ol", "table", "ul"])
     for i in problem_input:
-        problem_input_info = problem_input_info + str(i.text)
+        problem_input_info = problem_input_info + str(i)
     problem["problem_input"] = problem_input_info
 
     problem_output_info = ""
-    problem_output = soup.select("#problem_input > p")
+    problem_output = soup.select("#problem_output")[0].find_all(["p", "pre", "ol", "table", "ul"])
     for i in problem_output:
-        problem_output_info = problem_output_info + str(i.text)
+        problem_output_info = problem_output_info + str(i)
     problem["problem_output"] = problem_output_info
 
     problem["input_exam_list"] = []
@@ -156,13 +156,10 @@ for i in page_data:
         urls.append(url)
 
     for url in urls:
-        # 2초 기다리고 실행
-        time.sleep(3)
         soup_temp = urlRequest(make_req(url))
         problems_link = soup_temp.select("a.ivEtZs")
         for link in problems_link:
             print(str(i) + "__")
             print(link.get("href"))
-            time.sleep(3)
             crawl_prob(link.get("href"), level=i)
 
