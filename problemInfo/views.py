@@ -66,6 +66,7 @@ class UserProblemInfo(APIView):
 
             if len(userLevelProbs) != 0:
                 serializer = ProblemSerializer(userLevelProbs[0])
+                return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 passedProbsQuery = SolvedProblem.objects.filter(Q(user=user) & Q(correct=False))
                 passedProbs = []
