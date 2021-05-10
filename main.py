@@ -70,7 +70,7 @@ def problem_info(soup, problem):
     problem_content_info = ""
     problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol", "img"])
     for i in problem_content:
-        problem_content_info = problem_content_info + str(i.text) + str(i.get("src")).replace("None", "")
+        problem_content_info = problem_content_info + str(i)
     problem["problem_content"] = problem_content_info
 
     problem_input_info = ""
@@ -143,7 +143,7 @@ page_data = {}
 count = 0
 for i in pages:
     count += 1
-    if count <= 2 or count > 3:
+    if count <= 2 or count > 21:
         continue
     page_data[count - 2] = int(i.text) // 100
 
