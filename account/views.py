@@ -2,6 +2,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
+
+from question.models import Question
+from question.serializers import QuestionDetailSerializer
 from .models import User
 from django.conf import settings
 import jwt
@@ -141,6 +144,25 @@ class WithdrawalView(APIView):
                 user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
                 User.objects.get(id=user_pk).delete()
                 return Response(status=status.HTTP_200_OK)
+            except Exception as e:
+                print(e)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class MyQuestionView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
+
+        if token is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            try:
+                user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
+                myQuestions = Question.objects.filter(user_id=user_pk)
+                serializer = QuestionDetailSerializer(myQuestions, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             except Exception as e:
                 print(e)
                 return Response(status=status.HTTP_400_BAD_REQUEST)

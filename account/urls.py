@@ -18,4 +18,5 @@ urlpatterns = [
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('withdrawal/', views.WithdrawalView.as_view(), name='withdrawal'),
+    path('myQuestions/', views.MyQuestionView.as_view(), name='myQuestions'),
 ]

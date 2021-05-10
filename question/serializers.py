@@ -23,6 +23,15 @@ class CommentSaveSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class QuestionDetailSerializer(serializers.ModelSerializer):
+    user_id = serializers.ReadOnlyField(source=USERID)
+    question_id = serializers.ReadOnlyField(source='question.question_id')
+
+    class Meta:
+        model = models.Question
+        fields = '__all__'
+
+
 class QuestionSerializer(serializers.ModelSerializer):
     user_id = serializers.ReadOnlyField(source=USERID)
     nickname = serializers.ReadOnlyField(source=NICKNAME)
