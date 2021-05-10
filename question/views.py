@@ -61,16 +61,30 @@ class QuestionWriteView(APIView):
     @staticmethod
     def make_comment(request):
         try:
-            if request.data["where"] == "comment":
-                request_data = {
-                    'user_id': request.user.id,
-                    'content': request.data['content'],
-                    'object_id': request.data['object_id'],
-                    'content_type': ContentType.objects.get_for_model(Comment).id,
-                    'reply_to': request.data["reply_to"],
-                }
+            content_str = request.data["where"]
+            if content_str == "comment":
+                content_id = ContentType.objects.get_for_model(Comment).id
+            elif content_str == "question":
+                content_id = ContentType.objects.get_for_model(Question).id
+            elif content_str == "answer":
+                content_id = ContentType.objects.get_for_model(Answer).id
+            else:
+                raise LookupError
+
+            if 'reply_to' not in request.data:
+                refer_id = None
+            else:
+                refer_id = request.data['reply_to']
+
+            request_data = {
+                'user_id': request.user.id,
+                'content': request.data['content'],
+                'object_id': request.data['object_id'],
+                'content_type': content_id,
+                'reply_to': refer_id,
+            }
             comment = CommentSerializer(data=request_data)
-        except LookupError as e:
+        except LookupError:
             comment = None
         return comment
 
@@ -161,8 +175,8 @@ def post_list(request):
     total_page = {"total_page": math.ceil(Question.objects.filter().count() / view_count)}
 
     result = Question.objects \
-                 .filter(Q(subject__contains=keyword) | Q(content__contains=keyword)) \
-                 .order_by('-id')[start_index:end_index]
+        .filter(Q(subject__contains=keyword) | Q(content__contains=keyword)) \
+        .order_by('-id')[start_index:end_index]
 
     json_result = QuestionSerializer(result, many=True).data
     json_result.insert(0, total_page)
