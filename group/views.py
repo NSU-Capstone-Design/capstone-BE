@@ -137,7 +137,7 @@ class GroupManageListAPIView(APIView):
     def get(self, request, pk):
         group = self.get_object(pk)
         groupManage = GroupManage.objects.filter(group_id= group)
-        serializer = GroupManageSerializer(GroupManage, many=True)
+        serializer = GroupManageSerializer(groupManage, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
