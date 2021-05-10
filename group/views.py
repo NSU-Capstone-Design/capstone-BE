@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from .models import GroupManage, Group
-from .serializers import GroupSerializer, GroupManageSerializer
+from .serializers import GroupSerializer, GroupManageSerializer, GroupCreateSerializer
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 import jwt
@@ -9,7 +9,6 @@ from django.conf import settings
 from account.models import User
 from rest_framework.decorators import permission_classes
 from django.db import IntegrityError
-
 
 class GroupListAPIView(APIView):
     permission_classes(IsAuthenticated, )
@@ -28,18 +27,18 @@ class GroupListAPIView(APIView):
     def post(self, request):
         if self.get_object(request):
             userInfo = self.get_object(request)
-
+            print(userInfo)
             if userInfo.is_admin:
                 group = {
                     'group_name': request.data['group_name'],
                     'introduce': request.data['introduce'],
                     'group_visible': request.data['group_visible'],
-                    'group_master': userInfo.id
+                    'group_master': userInfo.id,
                 }
-                serializer = GroupSerializer(data=group)
+                serializer = GroupCreateSerializer(data=group)
 
                 try:
-                    if serializer.is_valid():
+                    if serializer.is_valid(raise_exception=True):
                         serializer.save()
                         return Response(serializer.data, status=status.HTTP_201_CREATED)
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
