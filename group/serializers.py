@@ -4,7 +4,17 @@ from account.models import User
 from account.serializers import UserSerializer
 
 
+class GroupMasterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'nickname',
+        ]
+
+
 class GroupSerializer(serializers.ModelSerializer):
+    group_master = GroupMasterSerializer()
+
     class Meta:
         model = Group
         fields = [
@@ -19,7 +29,7 @@ class GroupSerializer(serializers.ModelSerializer):
 class GroupManageSerializer(serializers.ModelSerializer):
     member = UserSerializer()
     group_id = GroupSerializer()
-    
+
     class Meta:
         model = GroupManage
         fields = [

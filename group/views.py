@@ -96,17 +96,9 @@ class GroupDetailAPIView(APIView):
 
     def get(self, request, pk):
         group = self.get_object(pk)
-        memberList = GroupManage.objects.filter(group_id=group)
-        print(memberList)
         serializer = GroupSerializer(group)
-        print(serializer.data)
-        serializer_m = GroupManageSerializer(memberList, many=True)
-        data = [
-            serializer.data,
-            serializer_m.data
-        ]
-        print(data)
-        return Response(data)
+        print('GroupDetailAPUView GET METHOD: >>> ', serializer.data)
+        return Response(serializer.data)
 
     def put(self, request, pk):
         group = self.get_object(pk)
@@ -132,6 +124,9 @@ class GroupDetailAPIView(APIView):
 
 
 class GroupManageListAPIView(APIView):
+    def get_object(self, pk):
+        return get_object_or_404(Group, pk=pk)
+
     def post(self, request):
         serializer = GroupManageSerializer(data=request.data)
         if serializer.is_valid():
@@ -139,8 +134,10 @@ class GroupManageListAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request):
-        serializer = GroupManageSerializer(GroupManage.objects.all(), many=True)
+    def get(self, request, pk):
+        group = self.get_object(pk)
+        groupManage = GroupManage.objects.filter(group_id= group)
+        serializer = GroupManageSerializer(GroupManage, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
