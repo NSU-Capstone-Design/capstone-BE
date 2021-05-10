@@ -16,7 +16,7 @@ class ProblemInfo(models.Model):
     problem_output = models.TextField(verbose_name="문제 출력 설명", null=True)
 
     def __str__(self):
-        return self.title
+        return str(self.prob_num) + '. '+self.title
 
     # def __eq__(self, other):
     #     print(other,'!check!')

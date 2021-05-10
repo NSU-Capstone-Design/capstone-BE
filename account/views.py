@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
+from group.models import *
 
 from question.models import Question
 from question.serializers import QuestionDetailSerializer
@@ -12,6 +13,29 @@ import jwt
 from .serializers import UserSerializer, UserCreateSerializer
 from rest_framework.decorators import api_view, permission_classes
 
+#임동규 -> 모든 유저 DB 가져오기
+class AllUserListView(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get_object(self, request):
+        token = request.META.get('HTTP_AUTHORIZATION', None)[7:]
+        if token:
+            try:
+                user_pk = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['user_id']
+                return User.objects.get(id=user_pk)
+            except Exception as e:
+                return False
+        else:
+            return False
+
+    def post(self, request):
+        if self.get_object(request):
+            userList = User.objects.filter(expert_user=False) #전문가가 아닌 모든 유저
+            serializer = UserSerializer(userList, many=True).data
+            return Response(serializer)
+        content = {
+            'message': "로그인 후 사용가능합니다."
+        }
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 # 인증이 필요한 요청 예제
 class TestView(APIView):
