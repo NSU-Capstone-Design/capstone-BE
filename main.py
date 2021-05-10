@@ -57,6 +57,7 @@ def crawl_prob(url, level):
 
 
 def problem_info(soup, problem):
+    baseUrl = "https://www.acmicpc.net/upload/"
     problem["title"] = soup.find("span", id="problem_title").text
     for i in soup.select("table#problem-info > tbody > tr"):
         problem_info_list = i.select("td")
@@ -70,7 +71,7 @@ def problem_info(soup, problem):
     problem_content_info = ""
     problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol", "img"])
     for i in problem_content:
-        problem_content_info = problem_content_info + str(i)
+        problem_content_info = problem_content_info + str(i).replace("/upload/", baseUrl)
     problem["problem_content"] = problem_content_info
 
     problem_input_info = ""
