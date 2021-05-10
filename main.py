@@ -144,7 +144,7 @@ page_data = {}
 count = 0
 for i in pages:
     count += 1
-    if count <= 2 or count > 21:
+    if count <= 7 or count > 21:
         continue
     page_data[count - 2] = int(i.text) // 100
 
