@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from .models import User, Question, Answer, Comment
-from .serializers import QuestionSerializer, AnswerSerializer, CommentSerializer
+from .serializers import QuestionSaveSerializer, AnswerSaveSerializer, CommentSaveSerializer, QuestionSerializer, AnswerSerializer, CommentSerializer
 from django.db.models import Q
 import math
 import jwt
@@ -38,7 +38,7 @@ class QuestionWriteView(APIView):
                 'content': request.data['content'],
                 'prob_num': request.data['problem'],
             }
-            question = QuestionSerializer(data=request_data)
+            question = QuestionSaveSerializer(data=request_data)
         except LookupError:
             question = None
         return question
@@ -52,7 +52,7 @@ class QuestionWriteView(APIView):
                 'content': request.data['content'],
                 'question': request.data['question'],
             }
-            answer = AnswerSerializer(data=request_data)
+            answer = AnswerSaveSerializer(data=request_data)
         except LookupError:
             answer = None
         return answer
@@ -61,24 +61,42 @@ class QuestionWriteView(APIView):
     @staticmethod
     def make_comment(request):
         try:
+            content_str = request.data["where"]
+            if content_str == "comment":
+                content_id = ContentType.objects.get_for_model(Comment).id
+            elif content_str == "question":
+                content_id = ContentType.objects.get_for_model(Question).id
+            elif content_str == "answer":
+                content_id = ContentType.objects.get_for_model(Answer).id
+            else:
+                raise LookupError
+
+            if 'reply_to' not in request.data:
+                refer_id = None
+            else:
+                refer_id = request.data['reply_to']
+
             request_data = {
                 'user_id': request.user.id,
                 'content': request.data['content'],
                 'object_id': request.data['object_id'],
-                'content_type': ContentType.objects.get_for_model(Question).id,
-                'reply_to': None,
+                'content_type': content_id,
+                'reply_to': refer_id,
             }
-            comment = CommentSerializer(data=request_data)
+            comment = CommentSaveSerializer(data=request_data)
         except LookupError:
             comment = None
         return comment
 
     def post(self, request):
+        print(request.data)
         if not self.get_object(request):
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
         # choose writing type as request element
-        def crossroad(x): return x in request.data
+        def crossroad(x):
+            return x in request.data
+
         if crossroad('problem'):
             # 게시글 작성
             serializer = self.make_question(request)
@@ -154,7 +172,7 @@ def post_list(request):
 
     end_index = page * view_count
     start_index = end_index - view_count
-    total_page = {"total_page":  math.ceil(Question.objects.filter().count() / view_count)}
+    total_page = {"total_page": math.ceil(Question.objects.filter().count() / view_count)}
 
     result = Question.objects \
         .filter(Q(subject__contains=keyword) | Q(content__contains=keyword)) \
