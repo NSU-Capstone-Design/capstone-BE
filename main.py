@@ -57,6 +57,7 @@ def crawl_prob(url, level):
 
 
 def problem_info(soup, problem):
+    baseUrl = "https://www.acmicpc.net/upload/"
     problem["title"] = soup.find("span", id="problem_title").text
     for i in soup.select("table#problem-info > tbody > tr"):
         problem_info_list = i.select("td")
@@ -68,22 +69,30 @@ def problem_info(soup, problem):
         problem["correct_answer_rate"] = problem_info_list[5].text
 
     problem_content_info = ""
-    problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol", "img"])
+    problem_content = soup.select("#problem_description")[0].find_all(["p", "pre", "ol", "table", "ul"])
     for i in problem_content:
-        problem_content_info = problem_content_info + str(i.text) + str(i.get("src")).replace("None", "")
+        problem_content_info = problem_content_info + str(i).replace("/upload/", baseUrl)
     problem["problem_content"] = problem_content_info
 
+    problem["problem_input"] = []
     problem_input_info = ""
-    problem_input = soup.select("#problem_input > p")
-    for i in problem_input:
-        problem_input_info = problem_input_info + str(i.text)
-    problem["problem_input"] = problem_input_info
+    try:
+        problem_input = soup.select("#problem_input")[0].find_all(["p", "pre", "ol", "table", "ul"])
+        for i in problem_input:
+            problem_input_info = problem_input_info + str(i)
+        problem["problem_input"] = problem_input_info
+    except:
+        pass
 
+    problem["problem_output"] = []
     problem_output_info = ""
-    problem_output = soup.select("#problem_input > p")
-    for i in problem_output:
-        problem_output_info = problem_output_info + str(i.text)
-    problem["problem_output"] = problem_output_info
+    try:
+        problem_output = soup.select("#problem_output")[0].find_all(["p", "pre", "ol", "table", "ul"])
+        for i in problem_output:
+            problem_output_info = problem_output_info + str(i)
+        problem["problem_output"] = problem_output_info
+    except:
+        pass
 
     problem["input_exam_list"] = []
     problem["output_exam_list"] = []
@@ -143,7 +152,7 @@ page_data = {}
 count = 0
 for i in pages:
     count += 1
-    if count <= 2 or count > 4:
+    if count <= 2 or count > 21:
         continue
     page_data[count - 2] = int(i.text) // 100
 
@@ -155,13 +164,10 @@ for i in page_data:
         urls.append(url)
 
     for url in urls:
-        # 2초 기다리고 실행
-        time.sleep(3)
         soup_temp = urlRequest(make_req(url))
         problems_link = soup_temp.select("a.ivEtZs")
         for link in problems_link:
             print(str(i) + "__")
             print(link.get("href"))
-            time.sleep(3)
             crawl_prob(link.get("href"), level=i)
 

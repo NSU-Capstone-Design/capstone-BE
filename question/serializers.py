@@ -1,10 +1,40 @@
 from rest_framework import serializers
 from . import models
 
+USERID = 'user_id.user_id'
+NICKNAME = 'user_id.nickname'
+
+
+class QuestionSaveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Question
+        fields = '__all__'
+
+
+class AnswerSaveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Answer
+        fields = '__all__'
+
+
+class CommentSaveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Comment
+        fields = '__all__'
+
+
+class QuestionDetailSerializer(serializers.ModelSerializer):
+    user_id = serializers.ReadOnlyField(source=USERID)
+    question_id = serializers.ReadOnlyField(source='question.question_id')
+
+    class Meta:
+        model = models.Question
+        fields = '__all__'
+
 
 class QuestionSerializer(serializers.ModelSerializer):
-    user_id = serializers.ReadOnlyField(source='user_id.user_id')
-    nickname = serializers.ReadOnlyField(source='user_id.nickname')
+    user_id = serializers.ReadOnlyField(source=USERID)
+    nickname = serializers.ReadOnlyField(source=NICKNAME)
 
     class Meta:
         model = models.Question
@@ -12,8 +42,8 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-    user_id = serializers.ReadOnlyField(source='user_id.user_id')
-    nickname = serializers.ReadOnlyField(source='user_id.nickname')
+    user_id = serializers.ReadOnlyField(source=USERID)
+    nickname = serializers.ReadOnlyField(source=NICKNAME)
 
     class Meta:
         model = models.Answer
@@ -22,6 +52,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     replies = serializers.SerializerMethodField(read_only=True, method_name="get_reply")
+    nickname = serializers.ReadOnlyField(source=NICKNAME)
 
     class Meta:
         model = models.Comment

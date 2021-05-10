@@ -18,4 +18,6 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     #임동규 view url
     path('userList/', views.AllUserListView.as_view(), name='UserList'),
+    path('withdrawal/', views.WithdrawalView.as_view(), name='withdrawal'),
+    path('myQuestions/', views.MyQuestionView.as_view(), name='myQuestions'),
 ]
