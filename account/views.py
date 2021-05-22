@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
-from group.models import *
+from group.models import Group, GroupManage
 
 from question.models import Question
 from question.serializers import QuestionDetailSerializer
@@ -30,6 +30,12 @@ class AllUserListView(APIView):
     def post(self, request):
         if self.get_object(request):
             userList = User.objects.filter(expert_user=False) #전문가가 아닌 모든 유저
+            member = GroupManage.objects.filter(group_id=request.data['id'])
+            l = []
+            for x in member:
+                l.append(x.member)
+            for x in l:
+                userList = userList.exclude(user_id=x)
             serializer = UserSerializer(userList, many=True).data
             return Response(serializer)
         content = {
