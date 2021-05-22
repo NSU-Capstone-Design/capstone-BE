@@ -98,7 +98,6 @@ class GroupDetailAPIView(APIView):
     def get(self, request, pk):
         group = self.get_object(pk)
         serializer = GroupSerializer(group)
-        print('GroupDetailAPUView GET METHOD: >>> ', serializer.data)
         return Response(serializer.data)
 
     def put(self, request, pk):
