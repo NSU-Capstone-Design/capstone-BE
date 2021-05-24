@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.generics import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
 
 from account.models import User
 from solved_problem.models import SolvedProblem
@@ -14,12 +16,21 @@ from .serializers import ProblemSerializer
 from django.db.models import Q
 
 
-class ProblemInfoView(APIView):
+class ProbList(generics.ListAPIView):
     permission_classes = (AllowAny,)
 
-    def get(self, request):
-        serializer = ProblemSerializer(ProblemInfo.objects.all(), many=True)
-        return Response(serializer.data)
+    queryset = ProblemInfo.objects.all()
+    serializer_class = ProblemSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['prob_num']
+
+
+# class ProblemInfoView(APIView):
+#     permission_classes = (AllowAny,)
+#
+#     def get(self, request):
+#         serializer = ProblemSerializer(ProblemInfo.objects.all(), many=True)
+#         return Response(serializer.data)
 
 
 class ProblemDetailView(APIView):
