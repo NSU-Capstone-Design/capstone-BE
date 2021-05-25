@@ -25,7 +25,7 @@ SECRET_KEY = 'j%67osiw@90xfb4jrkpajwxu_zzg=v3(s)3$+6__2y_@ytl$ee'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.ap-northeast-2.compute.amazonaws.com', 'localhost:3000', 'localhost:8000']
 
 # 앱 등록
 # 생성한 앱은 더 정확하게 설정 클래스를 등록해주세요
@@ -167,7 +167,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # 2021-02-14 김지수: 한국 시간대로 변경
 LANGUAGE_CODE = 'ko-kr'
 TIME_ZONE = 'Asia/Seoul'
-USE_TZ = False # 한국 시간대로 사용하므로 false
+USE_TZ = False  # 한국 시간대로 사용하므로 false
 
 USE_I18N = True
 
