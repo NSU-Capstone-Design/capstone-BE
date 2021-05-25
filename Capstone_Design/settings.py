@@ -25,7 +25,7 @@ SECRET_KEY = 'j%67osiw@90xfb4jrkpajwxu_zzg=v3(s)3$+6__2y_@ytl$ee'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ec2-15-164-220-141.ap-northeast-2.compute.amazonaws.com']
+ALLOWED_HOSTS = [".ap-northeast-2.compute.amazonaws.com"]
 
 # 앱 등록
 # 생성한 앱은 더 정확하게 설정 클래스를 등록해주세요
