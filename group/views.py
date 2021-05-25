@@ -98,7 +98,6 @@ class GroupDetailAPIView(APIView):
     def get(self, request, pk):
         group = self.get_object(pk)
         serializer = GroupSerializer(group)
-        print('GroupDetailAPUView GET METHOD: >>> ', serializer.data)
         return Response(serializer.data)
 
     def put(self, request, pk):
@@ -129,7 +128,7 @@ class GroupManageListAPIView(APIView):
         return get_object_or_404(Group, pk=pk)
 
     def post(self, request, pk):
-        group = Group.objects.get(pk=pk)
+        group = self.get_object(pk)
         user = User.objects.get(user_id=request.data['member'])
         groupmanage = GroupManage.objects.create(
             group_id=group,
@@ -173,3 +172,10 @@ class GroupManageDetailAPIView(APIView):
         groupmanage = self.get_object(pk)
         groupmanage.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class InviteMemberView(APIView):
+    def get(self, request, pk):
+        user = User.objects.filter(expert_user=False)
+        group = Group.objects.get(pk=pk)
+        member = GroupManage.objects.filter(group_id=group)

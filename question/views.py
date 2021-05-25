@@ -109,11 +109,11 @@ class QuestionWriteView(APIView):
         else:
             serializer = None
 
-        # if data isn`t serialized as well then raise error
+        # if data isn't serialized as well then raise error
         if serializer is None:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
-        # let`s insert data
+        # let's insert data
         if serializer.is_valid():
             serializer.save()
             ret_status = status.HTTP_201_CREATED
@@ -172,7 +172,7 @@ def post_list(request):
 
     end_index = page * view_count
     start_index = end_index - view_count
-    total_page = {"total_page": math.ceil(Question.objects.filter().count() / view_count)}
+    total_page = {"total_page": math.ceil(Question.objects.filter(Q(subject__contains=keyword) | Q(content__contains=keyword)).count() / view_count)}
 
     result = Question.objects \
         .filter(Q(subject__contains=keyword) | Q(content__contains=keyword)) \
