@@ -165,6 +165,7 @@ fabric.properties
 # 2021-02-14 김지수 추가
 # 숨김폴더
 .*
+!.config
 !.github
 # 마이그레이션 폴더
 migrations/
