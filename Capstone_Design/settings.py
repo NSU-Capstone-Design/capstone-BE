@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['http://capstone-design.s3-website.ap-northeast-2.amazonaws.com',
                  'http://ec2-15-164-220-141.ap-northeast-2.compute.amazonaws.com',
-                 'ec2-15-164-220-141.ap-northeast-2.compute.amazonaws.com',
+                 '172.31.39.225',
                  'capstone-design.s3-website.ap-northeast-2.amazonaws.com', 'localhost:3000', 'localhost:8000']
 
 # 앱 등록
