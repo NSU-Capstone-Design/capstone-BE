@@ -25,7 +25,10 @@ SECRET_KEY = 'j%67osiw@90xfb4jrkpajwxu_zzg=v3(s)3$+6__2y_@ytl$ee'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.ap-northeast-2.compute.amazonaws.com', 'localhost:3000', 'localhost:8000']
+ALLOWED_HOSTS = ['http://capstone-design.s3-website.ap-northeast-2.amazonaws.com',
+                 'http://ec2-15-164-220-141.ap-northeast-2.compute.amazonaws.com',
+                 'ec2-15-164-220-141.ap-northeast-2.compute.amazonaws.com',
+                 'capstone-design.s3-website.ap-northeast-2.amazonaws.com', 'localhost:3000', 'localhost:8000']
 
 # 앱 등록
 # 생성한 앱은 더 정확하게 설정 클래스를 등록해주세요
